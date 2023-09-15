@@ -1,0 +1,55 @@
+// Copyright 2023 INSERT TEAM NAME. All Rights Reserved. 
+// Derek Fallows
+
+// Changelog
+// 2023-15-09 - Created
+// 
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "PoolableActor.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDespawn, APoolableActor*, PoolActor);
+
+UCLASS()
+class WHIMSICALWIZARDRY_API APoolableActor : public AActor
+{
+	GENERATED_BODY()
+
+	public: 
+		// Sets default values for this actor's properties
+		APoolableActor(); 
+
+		FOnDespawn OnDespawn;
+
+		UFUNCTION(Server, Reliable)
+		virtual void Activate();
+
+		UFUNCTION(Server, Reliable)
+		virtual void Deactivate(); 
+
+		void SetLifeSpan(float lifeSpawn);
+		void SetActorIndex(int index); 
+
+		bool GetActiveState(); 
+		int GetActorIndex(); 
+		class UActorPool* GetPool(); 
+
+		void SetHasLifespan(bool hasLifespan);
+		void SetPool(UActorPool* actorPool); 
+
+	protected: 
+		UPROPERTY(Replicated)
+			bool IsActive; 
+		UPROPERT(Replicated)
+			boool hasLifespan = false; 
+		UPROPERTY(Replicated)
+			float Lifespan = 0.0f;
+		UPROPERTY(Replicated)
+			int Index; 
+
+		FTimerHandle LifespanTimer; 
+		UActorPool* ActorPool; 
+};
