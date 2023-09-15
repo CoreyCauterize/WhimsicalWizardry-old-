@@ -72,11 +72,8 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
-/WhimsicalWizardry/Saved/Logs
-/WhimsicalWizardry/Saved/Config/WindowsEditor
-/WhimsicalWizardry/Intermediate/ShaderAutogen
-/WhimsicalWizardry/Saved/Config/CrashReportClient
-/WhimsicalWizardry/Intermediate/ProjectFiles
-/WhimsicalWizardry/Intermediate/HeaderLookup.dat
-/WhimsicalWizardry/Intermediate/Build
-/WhimsicalWizardry/Intermediate
+/WhimsicalWizardry/Saved/*
+/WhimsicalWizardry/Intermediate/*
+/WhimsicalWizardry/Binaies/*
+/WhimsicalWizardry/Binaries/Win64/UnrealEditor-WhimsicalWizardry.dll
+/WhimsicalWizardry/Binaries/Win64/UnrealEditor-WhimsicalWizardry.pdb
