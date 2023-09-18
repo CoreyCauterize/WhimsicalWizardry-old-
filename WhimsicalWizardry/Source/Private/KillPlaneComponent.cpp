@@ -44,11 +44,16 @@ void UKillPlaneComponent::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherA
 {
 	if (OtherActor && OtherActor != GetOwner())
 	{
-	
+
 		AWhimsicalWizardryGameModeBase* gameMode = Cast<AWhimsicalWizardryGameModeBase>(GetWorld()->GetAuthGameMode());
 
 		AWimsicalWizardryGameStateBase* gameState = gameMode->GetGameState<AWimsicalWizardryGameStateBase>();
 
+		AWimsicalWizardryPlayerState* playerState = Cast<AWimsicalWizardryPlayerState>(gameState->PlayerArray[0]);
+
+		playerState->m_playerScore++;
+
+		gameState->m_player0Score++;
 
 		/*
 		TArray<TObjectPtr<APlayerState>> PlayerArray;
@@ -72,7 +77,7 @@ void UKillPlaneComponent::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherA
 						//This should be the matching player's state
 						int j = 0;
 					}
-			}		
+			}
 		}
 		*/
 
@@ -84,6 +89,4 @@ void UKillPlaneComponent::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherA
 		}
 
 	}
-
-	
 }

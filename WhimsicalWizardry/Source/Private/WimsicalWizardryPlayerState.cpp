@@ -3,7 +3,4 @@
 
 #include "WimsicalWizardryPlayerState.h"
 
-int AWimsicalWizardryPlayerState::GetPlayerScore()
-{
-	return m_playerScore;
-}
+

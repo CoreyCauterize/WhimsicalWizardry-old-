@@ -21,8 +21,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Score")
 		int GetPlayer1Score();
-
-private:
 	
 	int m_player0Score;
 	int m_player1Score;

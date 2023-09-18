@@ -14,9 +14,6 @@ class WHIMSICALWIZARDRY_API AWimsicalWizardryPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 	
-	int m_playerScore;
-
 public:
-	int GetPlayerScore();
-
+	int m_playerScore;
 };
