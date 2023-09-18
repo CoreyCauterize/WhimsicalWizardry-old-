@@ -22,9 +22,7 @@ void APoolableActor::Activate_Implementation()
 	SetActorTickEnabled(true);
 
 	if (HasLifespan == true)
-	{
 		GetWorldTimerManager().SetTimer(LifespanTimer, this, &APoolableActor::Deactivate, Lifespan, false); 
-	}
 }
 
 // Deactivates this actor, preventing it from being visible in the 

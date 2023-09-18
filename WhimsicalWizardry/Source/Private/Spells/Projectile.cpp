@@ -1,9 +1,9 @@
 //	Copyright 2023 Silver Standard Studios.All Rights Reserved.
 //	Derek Fallows
 
-#include "Spells/Projectile.h"							// internal inclusions
+#include "Spells/Projectile.h"						// internal inclusions
 #include "Pooling/ActorPool.h"
-#include "Components/ArrowComponent.h"					// unreal inclusions
+#include "Components/ArrowComponent.h"				// unreal inclusions
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"

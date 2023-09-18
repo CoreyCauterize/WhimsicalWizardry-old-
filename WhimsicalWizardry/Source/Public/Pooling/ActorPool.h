@@ -43,9 +43,13 @@ class WHIMSICALWIZARDRY_API UActorPool : public UActorComponent
 		void SetSizeOfPool(int size);
 		void SetUseActiveAfterRunningOut(bool useActiveAfterRunningout); 
 		
-		// Assists in firing of projectiles for weapons			// REMOVE
+		// Assists in firing of projectiles for weapons				// REMOVE
 		class UArrowComponent* GetFireComponent(); 
-		void SetFireComponent(UArrowComponent* fireArrow); 
+		void SetFireComponent(UArrowComponent* fireArrow);
+
+		// Actor class to be spawned
+		UPROPERTY(Replicated, EditAnywhere)
+			TSubclassOf<class APoolableActor> PoolableActorClass;
 
 		UPROPERTY(Replicated)
 			bool HasActorWaiting = false; 
@@ -59,10 +63,6 @@ class WHIMSICALWIZARDRY_API UActorPool : public UActorComponent
 		// Internal function for activating any actor
 		UFUNCTION(Server, Reliable)
 			void ActivateActor(APoolableActor* pooledActor); 
-		
-		// Actor class to be spawned
-		UPROPERTY(Replicated)
-			TSubclassOf<class APoolableActor> PoolableActorClass; 
 		
 		// Actors pooled
 		UPROPERTY(Replicated)
