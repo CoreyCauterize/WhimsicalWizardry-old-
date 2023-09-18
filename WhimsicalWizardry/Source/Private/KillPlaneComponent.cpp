@@ -6,6 +6,7 @@
 #include "Public/WhimsicalWizardryGameModeBase.h"
 #include "Public/WimsicalWizardryGameStateBase.h"
 #include "Public/WimsicalWizardryPlayerState.h"
+#include "GameFramework/Character.h"
 
 // Sets default values for this component's properties
 UKillPlaneComponent::UKillPlaneComponent()
@@ -41,16 +42,39 @@ void UKillPlaneComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UKillPlaneComponent::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor)
 {
-	if (OtherActor)
+	if (OtherActor && OtherActor != GetOwner())
 	{
-
+	
 		AWhimsicalWizardryGameModeBase* gameMode = Cast<AWhimsicalWizardryGameModeBase>(GetWorld()->GetAuthGameMode());
 
 		AWimsicalWizardryGameStateBase* gameState = gameMode->GetGameState<AWimsicalWizardryGameStateBase>();
 
 
+		/*
+		TArray<TObjectPtr<APlayerState>> PlayerArray;
 		//Add Logic here
-		//AWimsicalWizardryPlayerState* playerState = Cast<AWimsicalWizardryPlayerState>(gameState->PlayerArray[0]);
+		if (gameState)
+		{
+			PlayerArray = gameState->PlayerArray;
+		}
+
+		ACharacter* OtherCharacter = Cast<ACharacter>(OtherActor);
+		AWimsicalWizardryPlayerState* PState = Cast<AWimsicalWizardryPlayerState>(OtherCharacter->GetPlayerState());
+
+		if (PState)
+		{
+
+			for (int i = 0; i < PlayerArray.Num(); i++)
+			{
+
+					if (PState == PlayerArray[i])
+					{
+						//This should be the matching player's state
+						int j = 0;
+					}
+			}		
+		}
+		*/
 
 		UPlayerKnockedOffComponent* knockedOffComp = OtherActor->GetComponentByClass<UPlayerKnockedOffComponent>();
 
