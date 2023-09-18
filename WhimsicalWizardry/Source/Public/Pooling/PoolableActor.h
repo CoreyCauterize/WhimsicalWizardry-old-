@@ -1,9 +1,13 @@
-// Copyright 2023 INSERT TEAM NAME. All Rights Reserved. 
-// Derek Fallows
+/*	Copyright 2023 Silver Standard Studios.All Rights Reserved.
+	Derek Fallows
+	
+	Base class for any poolable actor that can be pooled with an ActorPool. 
+	Should be inherited from instead of AActor for any 
+	actor intended to be pooled this way.	*/
 
-// Changelog
-// 2023-15-09 - Created
-// 
+/*	Changelog
+	2023-15-09 - Created
+	*/ 
 
 #pragma once
 
@@ -25,10 +29,10 @@ class WHIMSICALWIZARDRY_API APoolableActor : public AActor
 		FOnDespawn OnDespawn;
 
 		UFUNCTION(Server, Reliable)
-		virtual void Activate();
+			virtual void Activate();
 
 		UFUNCTION(Server, Reliable)
-		virtual void Deactivate(); 
+			virtual void Deactivate(); 
 
 		void SetLifeSpan(float lifeSpawn);
 		void SetActorIndex(int index); 
@@ -43,8 +47,8 @@ class WHIMSICALWIZARDRY_API APoolableActor : public AActor
 	protected: 
 		UPROPERTY(Replicated)
 			bool IsActive; 
-		UPROPERT(Replicated)
-			boool hasLifespan = false; 
+		UPROPERTY(Replicated)
+			bool HasLifespan = false; 
 		UPROPERTY(Replicated)
 			float Lifespan = 0.0f;
 		UPROPERTY(Replicated)

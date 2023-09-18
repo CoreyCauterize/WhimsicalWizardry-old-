@@ -1,9 +1,13 @@
-// Copyright 2023 INSERT TEAM NAME HERE. All Rights Reserved. 
-// Derek Fallows
+/*	Copyright 2023 Silver Standard Studios.All Rights Reserved.
+	Derek Fallows
+	
+	Component class for managing a pool of preloaded actors to 
+	avoid repetitive object creation at runtime. 
+	Can only pool actors that inherit from the PoolableActor class.	*/
 
-// Changelog
-// 2023-15-09 - Created
-// 
+/*	Changelog
+	2023-15-09 - Created
+	*/ 
 
 #pragma once
 
@@ -22,13 +26,13 @@ class WHIMSICALWIZARDRY_API UActorPool : public UActorComponent
 		UActorPool();
 
 		UFUNCTION(Server, Reliable, Category = "Actor Pool")
-			APoolableActor* ActivateAnActor(); 
+			void ActivateAnActor(); 
 
-		UPROPERTY(Replicated, Reliable, Category = "Actor Pool")
+		UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
 			int Size = 5; 
 
 		UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
-			float PooledActorLifespawn = 0.0f; 
+			float PooledActorLifespan = 0.0f; 
 
 		UFUNCTION(Server, Reliable)
 			void OnDespawn(APoolableActor* PoolActor); 
@@ -39,7 +43,7 @@ class WHIMSICALWIZARDRY_API UActorPool : public UActorComponent
 		void SetSizeOfPool(int size);
 		void SetUseActiveAfterRunningOut(bool useActiveAfterRunningout); 
 		
-		// Assists in firing of projectiles for weapons     // REMOVE
+		// Assists in firing of projectiles for weapons			// REMOVE
 		class UArrowComponent* GetFireComponent(); 
 		void SetFireComponent(UArrowComponent* fireArrow); 
 
@@ -52,25 +56,31 @@ class WHIMSICALWIZARDRY_API UActorPool : public UActorComponent
 		// called when the game starts
 		virtual void BeginPlay() override;
 
+		// Internal function for activating any actor
 		UFUNCTION(Server, Reliable)
-		void ActivateActor(APoolableActor* pooledActor); 
-
+			void ActivateActor(APoolableActor* pooledActor); 
+		
 		// Actor class to be spawned
 		UPROPERTY(Replicated)
 			TSubclassOf<class APoolableActor> PoolableActorClass; 
-
+		
+		// Actors pooled
 		UPROPERTY(Replicated)
 			TArray<APoolableActor*> PooledActors;
-
+		
+		// Indexes of actors pooled
 		UPROPERTY(Replicated)
 			TArray<int> PooledActorIndexes; 
 		
-		UPROPERTY(Replicated)
+		// Whether the actors pooled in this pool have a set lifespan after being spawned
+		UPROPERTY(Replicated) 
 			bool ActorsHaveLifespan = false; 
 		
+		// Whether the actors managed by this pool should despawn the oldest existing actor 
+		// to supply requested new instances (alternatively, it will fail to activate one while empty)	
 		UPROPERTY(Replicated)
 			bool UseActiveAfterRunningOut = true; 
 
 		// Assists in firing of projectiles for weapons
-		UArrowComponent FireArrow; 
+		UArrowComponent* FireArrow; 
 };

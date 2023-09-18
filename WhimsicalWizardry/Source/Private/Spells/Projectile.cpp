@@ -1,11 +1,13 @@
-// Copyright 2023 INSERT TEAM NAME HERE. All Rights Reserved
-// Derek Fallows
+//	Copyright 2023 Silver Standard Studios.All Rights Reserved.
+//	Derek Fallows
 
-#include "Spells/Projectile.h"
-#include "Components/ArrowComponent.h"
+#include "Spells/Projectile.h"							// internal inclusions
+#include "Pooling/ActorPool.h"
+#include "Components/ArrowComponent.h"					// unreal inclusions
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 #include "Particles/ParticleSystem.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -38,11 +40,11 @@ AProjectile::AProjectile()
 	// Set up projectile movement
 	Movement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	Movement->SetUpdatedComponent(CollisionCapsule); 
-	Movement->InitialSpeed = BASE_INITIAL_SPEED; 
-	Movement->MaxSpeed = BASE_MAX_SPEED; 
-	Movement->ProjectileGravityScale = BASE_GRAVITY; 
-	Movement->bRotationFollowsVelocity = true; 
-	//Movement->Activate(false);	// deactivates for pooling later
+	Movement->InitialSpeed				= BASE_INITIAL_SPEED; 
+	Movement->MaxSpeed					= BASE_MAX_SPEED; 
+	Movement->ProjectileGravityScale	= BASE_GRAVITY; 
+	Movement->bRotationFollowsVelocity	= true; 
+	Movement->Activate(false);	// activated later when taken out of the pool
 }
 
 // Called when game starts or when spawned
@@ -57,12 +59,46 @@ void AProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-// Called on projectile impact
-// Hitcomponent - Component of this actor hit | OtherActor - Actor hit
-// OtherComp    - Component of other actor    | NormalImpulse - normal vector of collision
-// Hit          - Hit result
-void AProjectile::OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, FVector NormalImpulse, Const FHitResult& Hit)
+// Take projectile out of the pool
+void AProjectile::Activate_Implementation()
 {
+	APoolableActor::Activate(); 
+
+	// cause the projectile to start moving again
+	Movement->Activate(true); 
+	Movement->SetUpdatedComponent(GetRootComponent()); 
+	Movement->SetVelocityInLocalSpace(GetPool()->GetFireComponent()->GetForwardVector() * Movement->InitialSpeed);
+
+	/*Movement->Velocity = GetPool()->GetFireComponent()->GetForwardVector()
+												* Movement->InitialSpeed;*/
+	//Movement->SetVelocityInLocalSpace(GetPool()->GetFireComponent()->GetForwardVector() * Movement->InitialSpeed); 
+}
+
+// Put projectile back into the pool
+void AProjectile::Deactivate_Implementation()
+{
+	APoolableActor::Deactivate(); 
+}
+
+/* Called on projectile impact
+   Hitcomponent - Component of this actor hit | OtherActor - Actor hit
+   OtherComp    - Component of other actor    | NormalImpulse - normal vector of collision
+   Hit          - Hit result				  |											*/
+void AProjectile::OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	FVector spawnLocation = GetActorLocation(); 
 	
+	// Emit impact particles
+	if (ImpactParticles != nullptr)
+		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactParticles, spawnLocation, 
+							FRotator::ZeroRotator, true, EPSCPoolMethod::AutoRelease); 
+
+	// Play impact sound
+	if (ImpactSound != nullptr)
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, 
+							spawnLocation, FRotator::ZeroRotator); 
+
+	// Deactivate the projectile so it can be used again later
+	Deactivate(); 
 }

@@ -1,19 +1,24 @@
-// Copyright 2023 INSERT COMPANY NAME HERE. All Rights Reserved.
-// Derek Fallows
+/*	Copyright 2023 Silver Standard Studios.All Rights Reserved.
+	Derek Fallows
 
-// Changelog
-// 2023-15-09 - Created
-// 
+	Base class for projectiles. 
+	Inherits functionality from PoolableActor to allow the projectile to be pooled using an ActorPool. 
+	Can be inherited from to represent any projectile with unique mechanics. */
+
+/*	Changelog
+	2023-15-09 - Created
+	*/
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "../Pooling/PoolableActor.h"
 #include "Projectile.generated.h"
 
 // Base projectile class from which all projectiles (usually created by spells) inherit functionality
 
 UCLASS()
-class WHIMSICALWIZARDRY_API AProjectile : public AActor
+class WHIMSICALWIZARDRY_API AProjectile : public APoolableActor
 {
 	GENERATED_BODY()
 
@@ -22,6 +27,12 @@ class WHIMSICALWIZARDRY_API AProjectile : public AActor
 		
 		// called every frame
 		virtual void Tick(float Deltatime) override; 
+
+		// Takes projectile out of pool
+		virtual void Activate_Implementation() override; 
+
+		// Puts projectile back into pool
+		virtual void Deactivate_Implementation() override; 
 
 		// Collision capsule
 		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
@@ -53,8 +64,8 @@ class WHIMSICALWIZARDRY_API AProjectile : public AActor
 		// Hit          - Hit result
 		UFUNCTION(Category = "Collision")
 		virtual void OnProjectileImpact(UPrimitiveComponent* HitComponent, 
-			AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse,
-			const FHitResult& Hit);
+						AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+							FVector NormalImpulse, const FHitResult& Hit);
 
 		// Projectile constants
 		static const float BASE_CAPSULE_SIZE_X; 

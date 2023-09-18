@@ -1,10 +1,8 @@
-// Copyright 2023 INSERT TEAM NAME HERE. All Rights Reserved. 
-// Derek Fallows
+//	Copyright 2023 Silver Standard Studios.All Rights Reserved.
+//	Derek Fallows
 
-#include "Constants.h"
-#include "Pooling/ActorPool.h"
-
-#include "Net/UnrealNetwork.h"
+#include "Pooling/ActorPool.h"		// internal inclusions
+#include "Net/UnrealNetwork.h"		// unreal inclusions
 #include "Pooling/PoolableActor.h"
 
 UActorPool::UActorPool()
@@ -24,7 +22,9 @@ void UActorPool::BeginPlay()
 
 	for (int i = 0; i < Size; i++)
 	{
-		APoolableActor* poolActor = world->SpawnActor<APoolableActor>(PoolableActorClass, FVector(ZERO_VECTOR), FRotator(ZERO_ROTATOR)); 
+		APoolableActor* poolActor = 
+			world->SpawnActor<APoolableActor>(PoolableActorClass, 
+			FVector(FVector::ZeroVector), FRotator(FRotator::ZeroRotator)); 
 		check(poolActor != nullptr); 
 
 		poolActor->SetPool(this); 
@@ -36,10 +36,10 @@ void UActorPool::BeginPlay()
 	}
 }
 
-/* Activates an actor (internal function used by the ActivateAnActor function) */
+// Activates an actor (internal function used by the ActivateAnActor function) 
 void UActorPool::ActivateActor_Implementation(APoolableActor* pooledActor)
 {
-	pooledActor->TeleportTo(ZERO_VECTOR, ZERO_ROTATOR); 
+	pooledActor->TeleportTo(FVector::ZeroVector, FRotator::ZeroRotator);
 
 	if (ActorsHaveLifespan == true)
 	{ 
@@ -51,8 +51,8 @@ void UActorPool::ActivateActor_Implementation(APoolableActor* pooledActor)
 	PooledActorIndexes.Add(pooledActor->GetActorIndex());
 }
 
-/* Activates an actor from the pool. If it fails to activate an actor, will 
-instead activate one that already exists in the world */
+// Activates an actor from the pool. If it fails to activate an actor, will 
+// instead activate one that already exists in the world 
 void UActorPool::ActivateAnActor_Implementation()
 {
 	for (APoolableActor* pooledActor : PooledActors)
@@ -71,7 +71,7 @@ void UActorPool::ActivateAnActor_Implementation()
 	{
 		int pooledActorIndex = PooledActorIndexes[0];
 		PooledActorIndexes.Remove(pooledActorIndex); 
-		APoolableActor* pooledActor = Pooledctors[pooledActorsIndex]; 
+		APoolableActor* pooledActor = PooledActors[pooledActorIndex]; 
 		check(pooledActor != nullptr); 
 
 		pooledActor->Deactivate(); 
@@ -83,28 +83,64 @@ void UActorPool::ActivateAnActor_Implementation()
 	}
 }
 
-/* Called automatically when deactivating an actor using the OnDespawn Delegate in PoolableActor */
+// Called automatically when deactivating an actor using the OnDespawn Delegate in PoolableActor
 void UActorPool::OnDespawn_Implementation(APoolableActor* PoolActor)
 {
 	PooledActorIndexes.Remove(PoolActor->GetActorIndex()); 
 }
 
-/* Sets whether the actors in the pool will only exist in the world for a set period of time */
+// Sets whether the actors in the pool will only exist in the world for a set period of time
 void UActorPool::SetActorsHaveLifespan(bool actorsHaveLifespan)
 {
 	ActorsHaveLifespan = actorsHaveLifespan; 
 }
 
-/* Sets the time that the actors will exist in the world, 
-if they are only set to exist in the world for a set time*/
+// Sets the time that the actors will exist in the world, 
+// if they are only set to exist in the world for a set time
 void UActorPool::SetActorLifespan(float actorLifespan)
 {
 	PooledActorLifespan = actorLifespan; 
 }
 
-/* Sets the poolable ctor class to spawn */
-void UActorPool::SetPoolableActor(TSubclassOf<class APoolablActor> poolableActorClass)
+void UActorPool::SetPoolableActor(TSubclassOf<class APoolableActor> poolableActorClass)
 {
 	PoolableActorClass = poolableActorClass; 
 }
 
+// Sets the amount of actors that will be in the pool in total
+void UActorPool::SetSizeOfPool(int size)
+{
+	Size = size; 
+}
+
+// Sets whether the pool will start using active actors once it runs out of inactive actors to use
+void UActorPool::SetUseActiveAfterRunningOut(bool useActiveAfterRunningOut)
+{
+	UseActiveAfterRunningOut = useActiveAfterRunningOut;
+}
+
+// Gets the fire component stored in the pool (used to help projectiles acess fireArrows
+UArrowComponent* UActorPool::GetFireComponent()
+{
+	return FireArrow; 
+}
+
+// Sets up the fire component to be stored in the pool (used to help projectiles access fireArrows)
+void UActorPool::SetFireComponent(UArrowComponent* fireArrow)
+{
+	FireArrow = fireArrow; 
+}
+
+void UActorPool::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Variables to be replicated
+	DOREPLIFETIME(UActorPool, ActorsHaveLifespan);
+	DOREPLIFETIME(UActorPool, HasActorWaiting);
+	DOREPLIFETIME(UActorPool, PoolableActorClass);
+	DOREPLIFETIME(UActorPool, PooledActorLifespan);
+	DOREPLIFETIME(UActorPool, Size);
+	DOREPLIFETIME(UActorPool, UseActiveAfterRunningOut);
+	DOREPLIFETIME(UActorPool, WaitingActor);
+}
