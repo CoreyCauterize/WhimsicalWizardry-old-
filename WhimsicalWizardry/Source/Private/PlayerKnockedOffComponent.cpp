@@ -4,6 +4,7 @@
 #include "PlayerKnockedOffComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Character.h"
 
 // Sets default values for this component's properties
 UPlayerKnockedOffComponent::UPlayerKnockedOffComponent()
