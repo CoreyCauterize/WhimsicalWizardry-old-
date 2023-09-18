@@ -13,5 +13,13 @@ UCLASS()
 class WHIMSICALWIZARDRY_API AWhimsicalWizardryGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+
+public:
+
+	class AItemSpell RollSpell();
+
+protected:
+
+	TArray<TSubclassOf<AItemSpell>> m_ListOfAllSpells;
 	
 };

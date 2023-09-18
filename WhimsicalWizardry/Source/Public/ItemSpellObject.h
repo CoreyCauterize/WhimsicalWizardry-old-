@@ -4,38 +4,33 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ItemSpell.generated.h"
+#include "ItemSpellObject.generated.h"
 
 UCLASS(abstract)
-class WHIMSICALWIZARDRY_API AItemSpell : public AActor
+class WHIMSICALWIZARDRY_API AItemSpellObject : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AItemSpell();
+	AItemSpellObject();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	
-	bool removeFromInventoryOnFired;
-	float backfireChance;
-	
+	bool isReflectable;
+	float lifetime;
+	FVector hitForce;
+	bool needsToCallOnLifetimeEnd;
 
-	
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void OnFire();
-
-	virtual void OnBackfire();
-
-	virtual void OnRolled();
-
 	
+	virtual void OnLifetimeEnd();
+
+	virtual void OnReflected();
 
 };
