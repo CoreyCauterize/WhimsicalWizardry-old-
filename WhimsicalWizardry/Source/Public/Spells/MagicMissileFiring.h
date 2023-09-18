@@ -41,6 +41,13 @@ class WHIMSICALWIZARDRY_API UMagicMissileFiring : public UActorComponent
 		UPROPERTY(EditAnywhere, Category = "Effects")
 			class USoundBase* FireSound = nullptr; 
 
+		// The input component
+		UPROPERTY(EditAnywhere, Category = "Input")
+			class UEnhancedInputComponent* InputComponent = nullptr; 
+		// The input for basic firing
+		UPROPERTY(EditAnywhere, Category = "Input")
+			class UInputAction* FireInput = nullptr; 
+
 	protected: 
 		// Called when game starts or when spawned
 		virtual void BeginPlay() override;

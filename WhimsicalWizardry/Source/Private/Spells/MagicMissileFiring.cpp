@@ -4,6 +4,8 @@
 #include "Spells/MagicMissileFiring.h"	// internal inclusions
 #include "Pooling/ActorPool.h"
 #include "Spells/Projectile.h"
+#include "InputAction.h"
+#include "EnhancedInputComponent.h"
 #include "Components/ArrowComponent.h"	// unreal inclusions
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -32,6 +34,8 @@ void UMagicMissileFiring::BeginPlay()
 
 	// Allows the pool of projectiles to have access to the fire arrow
 	ProjectilePool->SetFireComponent(FireArrow); 
+
+	//InputComponent->BindAction()
 }
 
 /* Called every frame. 
