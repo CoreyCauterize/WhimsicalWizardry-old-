@@ -20,9 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	
-	bool removeFromInventoryOnFired;
-	float backfireChance;
-	
+	bool removeFromInventoryOnFired;	
 
 	
 
@@ -30,9 +28,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void OnFire();
+	virtual void OnFire(class USpellInventoryComponent* belongingInventory = nullptr);
 
-	virtual void OnBackfire();
+
 
 	virtual void OnRolled();
 

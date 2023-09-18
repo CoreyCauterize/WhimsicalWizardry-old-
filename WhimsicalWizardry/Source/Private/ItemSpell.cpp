@@ -15,7 +15,6 @@ AItemSpell::AItemSpell()
 void AItemSpell::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -25,14 +24,11 @@ void AItemSpell::Tick(float DeltaTime)
 
 }
 
-void AItemSpell::OnFire()
+void AItemSpell::OnFire(class USpellInventoryComponent* belongingInventory)
 {
+
 }
 
-
-void AItemSpell::OnBackfire()
-{
-}
 
 void AItemSpell::OnRolled()
 {
