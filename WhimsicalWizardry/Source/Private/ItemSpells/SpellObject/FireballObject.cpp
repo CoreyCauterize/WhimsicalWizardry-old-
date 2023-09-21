@@ -15,7 +15,7 @@ AFireballObject::AFireballObject()
 
 	fireballCollision = CreateDefaultSubobject<UBoxComponent>("Fireball Collision");
 	SetRootComponent(fireballCollision);
-	fireballCollision->SetBoxExtent(FVector(2, 2, 2)); //Todo: Make this a const in FireballObject header
+	fireballCollision->SetBoxExtent(FVector(2, 2, 2)); //Todo: Make this a const in FireballObject header and adjust it to be the right size
 
 	fireballVisual = CreateDefaultSubobject<UNiagaraComponent>("Fireball Visual");
 	fireballVisual->SetupAttachment(RootComponent);

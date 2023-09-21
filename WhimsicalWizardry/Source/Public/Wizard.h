@@ -21,6 +21,10 @@ class AWizard : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
 
+	/** Component for logic on hitting a kill plane*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Custom, meta = (AllowPrivateAccess = "true"))
+		class UPlayerKnockedOffComponent* PlayerKnockedOffComponent;
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputMappingContext* DefaultMappingContext;
