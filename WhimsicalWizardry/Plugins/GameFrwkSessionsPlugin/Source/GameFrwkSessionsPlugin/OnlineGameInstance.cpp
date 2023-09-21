@@ -325,7 +325,9 @@ void UOnlineGameInstance::OnCreateSessionComplete(FName SessionName, bool Succes
 	UWorld* World = GetWorld();
 	if (!ensure(World != nullptr)) return;
 
-	FString LobbyMap = "/GameFrwkSessionsPlugin/Maps/Lobby?listen";
+	//FString LobbyMap = "/GameFrwkSessionsPlugin/Maps/Lobby?listen";
+	FString LobbyMap = "/Game/Maps/DemoStage?listen";
+	
 	if (SessionSettings.bIsLANMatch)
 	{
 		LobbyMap.Append("?bIsLanMatch=1");
