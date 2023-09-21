@@ -42,5 +42,16 @@ public:
 
 	UFUNCTION()
 	void TryAddSpell(AItemSpell* spellToAdd);
+
+
+//STUFF TO BE MOVED:
+
+public:
+
+	class AItemSpell* RollSpell();
+
+protected:
+
+	TArray<TSubclassOf<AItemSpell>> m_ListOfAllSpells;
 		
 };

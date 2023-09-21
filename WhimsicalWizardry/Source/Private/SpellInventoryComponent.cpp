@@ -54,3 +54,9 @@ void USpellInventoryComponent::TryAddSpell(AItemSpell* spellToAdd)
 	}
 }
 
+AItemSpell* USpellInventoryComponent::RollSpell()
+{
+	int spellNum = FMath::RandRange(0, m_ListOfAllSpells.Num()-1);
+
+	return Cast<AItemSpell>(m_ListOfAllSpells[spellNum]);
+}

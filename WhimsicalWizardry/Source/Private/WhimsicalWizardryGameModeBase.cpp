@@ -2,9 +2,3 @@
 
 
 #include "WhimsicalWizardryGameModeBase.h"
-#include "ItemSpell.h"
-
-AItemSpell AWhimsicalWizardryGameModeBase::RollSpell()
-{
-    return AItemSpell();
-}
