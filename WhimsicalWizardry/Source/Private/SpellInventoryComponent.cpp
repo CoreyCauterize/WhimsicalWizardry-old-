@@ -13,7 +13,7 @@ USpellInventoryComponent::USpellInventoryComponent()
 
 	for (int i = 0; i < MAX_NUM_SPELLS; i++)
 	{
-		heldSpells[i] = nullptr;
+		heldSpells.Add(nullptr);
 	}
 
 	// ...
@@ -56,7 +56,11 @@ void USpellInventoryComponent::TryAddSpell(AItemSpell* spellToAdd)
 
 AItemSpell* USpellInventoryComponent::RollSpell()
 {
-	int spellNum = FMath::RandRange(0, m_ListOfAllSpells.Num()-1);
+	if (m_ListOfAllSpells.Num() > 0)
+	{
+		int spellNum = FMath::RandRange(0, m_ListOfAllSpells.Num() - 1);
 
-	return Cast<AItemSpell>(m_ListOfAllSpells[spellNum]);
+		return Cast<AItemSpell>(m_ListOfAllSpells[spellNum]);
+	}
+	return nullptr;
 }
