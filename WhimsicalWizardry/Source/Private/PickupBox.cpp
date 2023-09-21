@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "SpellInventoryComponent.h"
 #include "PickupBox.h"
 
 // Sets default values
@@ -12,7 +12,7 @@ APickupBox::APickupBox()
 	pickupHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Pickup Hitbox"));
 	pickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pickup Mesh"));
 	RootComponent = pickupHitbox;
-	pickupHitbox->SetupAttachment(pickupMesh);
+	pickupMesh->SetupAttachment(pickupHitbox);
 
 	pickupHitbox->SetSimulatePhysics(false);
 	pickupHitbox->OnComponentBeginOverlap.AddDynamic(this, &APickupBox::OnOverlapBegin);
@@ -36,9 +36,10 @@ void APickupBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor
 	{
 		return;
 	}
-
+	USpellInventoryComponent* tempInv;
 	// Put Riley's method here when it is done, but for now I will disappear!
-
+	tempInv = Cast <USpellInventoryComponent>(wizard->GetComponentByClass(USpellInventoryComponent::StaticClass()));
+	tempInv->TryAddSpell(nullptr);
 	SetActorHiddenInGame(true);
 	
 }
