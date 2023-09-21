@@ -21,8 +21,10 @@ protected:
 
 	bool isReflectable;
 	float lifetime;
-	FVector hitForce;
+	float hitForceScale;
 	bool needsToCallOnLifetimeEnd;
+
+	FTimerHandle LifetimeEndTimerHandle;
 
 
 public:	

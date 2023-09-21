@@ -16,6 +16,11 @@ void AItemSpellObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
+
+	if (needsToCallOnLifetimeEnd)
+	{
+		GetWorld()->GetTimerManager().SetTimer(LifetimeEndTimerHandle, this, &AItemSpellObject::OnLifetimeEnd, lifetime);
+	}
 }
 
 // Called every frame
