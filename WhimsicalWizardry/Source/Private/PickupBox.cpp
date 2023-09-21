@@ -17,6 +17,9 @@ APickupBox::APickupBox()
 	pickupHitbox->SetSimulatePhysics(false);
 	pickupHitbox->OnComponentBeginOverlap.AddDynamic(this, &APickupBox::OnOverlapBegin);
 
+
+	SetReplicates(true);
+
 }
 
 // Called when the game starts or when spawned
@@ -28,13 +31,26 @@ void APickupBox::BeginPlay()
 
 void APickupBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//Make this dissappear when overlapping with players
+	ACharacter* wizard = Cast<ACharacter>(OtherActor);
+	if (wizard == nullptr)
+	{
+		return;
+	}
+
+	// Put Riley's method here when it is done, but for now I will disappear!
+
+	SetActorHiddenInGame(true);
+	
 }
 
 // Called every frame
 void APickupBox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
+void APickupBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}

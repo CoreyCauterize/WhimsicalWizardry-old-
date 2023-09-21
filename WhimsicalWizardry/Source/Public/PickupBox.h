@@ -8,7 +8,9 @@ Code for the powerups and pickups
 
 #include "Components/CapsuleComponent.h"
 #include "CoreMinimal.h"
+#include "Net/UnrealNetwork.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
 #include "PickupBox.generated.h"
 
 
@@ -21,12 +23,13 @@ public:
 	// Sets default values for this actor's properties
 	APickupBox();
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
 	UStaticMeshComponent* pickupMesh;
 	//Set These to replicated when implementing networking, they don't like not having the other function and I don't want to do it
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
 	UCapsuleComponent* pickupHitbox;
-
+	
+	
 
 protected:
 	// Called when the game starts or when spawned
