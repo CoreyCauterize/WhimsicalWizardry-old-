@@ -29,10 +29,10 @@ public:
 	FOnDespawn OnDespawn;
 
 	UFUNCTION(Server, Reliable)
-	virtual void Activate();
+		virtual void Activate();
 
 	UFUNCTION(Server, Reliable)
-	virtual void Deactivate();
+		virtual void Deactivate();
 
 	void SetLifeSpan(float lifeSpawn);
 	void SetActorIndex(int index);
@@ -44,16 +44,17 @@ public:
 	void SetHasLifespan(bool hasLifespan);
 	void SetPool(UActorPool* actorPool);
 
+	UPROPERTY(Replicated)
+		bool HasLifespan = false;
+	UPROPERTY(Replicated)
+		float Lifespan = 0.0f;
+	FTimerHandle LifespanTimer;
+
 protected:
 	UPROPERTY(Replicated)
 	bool IsActive;
 	UPROPERTY(Replicated)
-	bool HasLifespan = false;
-	UPROPERTY(Replicated)
-	float Lifespan = 0.0f;
-	UPROPERTY(Replicated)
 	int Index;
 
-	FTimerHandle LifespanTimer;
 	UActorPool* ActorPool;
 };

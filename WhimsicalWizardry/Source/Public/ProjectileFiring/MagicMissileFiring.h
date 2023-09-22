@@ -54,7 +54,7 @@ public:
 
 protected:
 	// Called when game starts or when spawned
-		virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 
 	// Fires the projectile
 	UFUNCTION(Server, Reliable, Category = "Gameplay")

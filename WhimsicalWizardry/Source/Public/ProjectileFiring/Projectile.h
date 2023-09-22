@@ -36,23 +36,23 @@ public:
 
 	// Collision capsule
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
-	class UCapsuleComponent* CollisionCapsule;
+		class UCapsuleComponent* CollisionCapsule;
 
 	// Sound used on impact
 	UPROPERTY(EditAnywhere, Category = "Effects")
-	class USoundBase* ImpactSound;
+		class USoundBase* ImpactSound;
 
 	// Static mesh
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
-	class UStaticMeshComponent* Mesh;
+		class UStaticMeshComponent* Mesh;
 
 	// Movement component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	class UProjectileMovementComponent* Movement;
+		class UProjectileMovementComponent* Movement;
 
 	// Particle effect on impact
 	UPROPERTY(EditAnywhere, Category = "Effects")
-	class UParticleSystem* ImpactParticles;
+		class UParticleSystem* ImpactParticles;
 
 protected:
 	// called when game starts or when spawned
@@ -63,9 +63,9 @@ protected:
 	// OtherComp    - Component of other actor    | NormalImpulse - normal vector of collision
 	// Hit          - Hit result
 	UFUNCTION(Category = "Collision")
-	virtual void OnProjectileImpact(UPrimitiveComponent* HitComponent,
-		AActor* OtherActor, UPrimitiveComponent* OtherComp,
-		FVector NormalImpulse, const FHitResult& Hit);
+		virtual void OnProjectileImpact(UPrimitiveComponent* HitComponent,
+			AActor* OtherActor, UPrimitiveComponent* OtherComp,
+			FVector NormalImpulse, const FHitResult& Hit);
 
 	// Projectile constants
 	static const float BASE_CAPSULE_SIZE_X;

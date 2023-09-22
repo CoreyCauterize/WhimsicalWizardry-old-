@@ -29,12 +29,12 @@ void APoolableActor::Activate_Implementation()
 // world, disabling collision an preventing ticking every frame
 void APoolableActor::Deactivate_Implementation()
 {
-	IsActive = false;
+	/*IsActive = false;
 	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);
 	SetActorTickEnabled(false);
 	GetWorldTimerManager().ClearAllTimersForObject(this);
-	OnDespawn.Broadcast(this);
+	OnDespawn.Broadcast(this);*/
 }
 
 // Sets the lifespan of this actor if it 

@@ -8,6 +8,25 @@
 UActorPool::UActorPool()
 {
 	SetIsReplicatedByDefault(true);
+	UWorld* world = GetWorld();
+	for (int i = 0; i < 1; i++)
+	{
+		if (world)
+		{
+			APoolableActor* poolActor =													// CURRENT ISSUE
+				world->SpawnActor<APoolableActor>(
+					FVector(FVector::ZeroVector), FRotator(FRotator::ZeroRotator));
+
+		}
+		
+		//check(poolActor != nullptr);
+
+		//poolActor->SetPool(this);
+		//poolActor->SetActorIndex(i);
+		//poolActor->OnDespawn.AddDynamic(this, &UActorPool::OnDespawn);
+		//PooledActors.Add(poolActor);
+		//poolActor->Deactivate();
+	}
 }
 
 void UActorPool::BeginPlay()
@@ -19,23 +38,10 @@ void UActorPool::BeginPlay()
 		return;
 	}
 
-	UWorld* world = GetWorld();
-	check(world != nullptr);
+	
+	//check(world != nullptr);
 
-	for (int i = 0; i < Size; i++)
-	{
-		APoolableActor* poolActor =
-			world->SpawnActor<APoolableActor>(PoolableActorClass,
-				FVector(FVector::ZeroVector), FRotator(FRotator::ZeroRotator));
-		check(poolActor != nullptr);
-
-		poolActor->SetPool(this);
-		poolActor->Activate();
-		poolActor->SetActorIndex(i);
-		poolActor->OnDespawn.AddDynamic(this, &UActorPool::OnDespawn);
-		PooledActors.Add(poolActor);
-		poolActor->Deactivate();
-	}
+	
 }
 
 // Activates an actor (internal function used by the ActivateAnActor function) 

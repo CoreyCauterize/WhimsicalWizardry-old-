@@ -1,12 +1,12 @@
 /*	Copyright 2023 Silver Standard Studios (based on base ACharacter by Epic Games, Inc. All rights reserved.
- 
+
 	Component allowing a controlled character to fire basic magical
 	projectiles that don't require getting a pickup.			*/
 
-	/*	Changelog
-		2023-15-08 - Created
-		2023-15-09 - Added magic missile firing
-		*/
+/*	Changelog
+	2023-15-08 - Created
+	2023-15-09 - Added magic missile firing
+	*/
 
 #pragma once
 
@@ -63,18 +63,17 @@ class AWizard : public ACharacter
 
 	// Basic magic missile firing
 	UPROPERTY(EditAnywhere, Category = "Magic Missile")
-		class UMagicMissileFiring* MagicMissileFiring = nullptr; 
+		class UMagicMissileFiring* MagicMissileFiring = nullptr;
 	// Magic missile pool
 	UPROPERTY(EditAnywhere, Category = "Magic Missile")
-		class UActorPool* MagicMissilePool = nullptr; 
-	UPROPERTY(EditAnywhere, Category = "Magic Missile")
-		int MagicMissilePoolAmount = 15; 
+		class UActorPool* MagicMissilePool = nullptr;
+	int MagicMissilePoolAmount = 15;
 	// Magic missile class (must be a poolable actor)
-	UPROPERTY(Replicated, EditAnywhere)
-		TSubclassOf<class APoolableActor> MagicMissileClass = nullptr; 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class APoolableActor> MagicMissileClass = nullptr;
 	// FiringArrow
 	UPROPERTY(EditAnywhere, Category = "FiringArrow")
-		class UArrowComponent* FiringArrow = nullptr; 
+		class UArrowComponent* FiringArrow = nullptr;
 
 
 public:

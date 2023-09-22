@@ -5,9 +5,9 @@
 	avoid repetitive object creation at runtime.
 	Can only pool actors that inherit from the PoolableActor class.	*/
 
-/*	Changelog
-	2023-15-09 - Created
-	*/
+	/*	Changelog
+		2023-15-09 - Created
+		*/
 
 #pragma once
 
@@ -26,16 +26,16 @@ public:
 	UActorPool();
 
 	UFUNCTION(Server, Reliable, Category = "Actor Pool")
-	void ActivateAnActor();
+		void ActivateAnActor();
 
 	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
-	int Size = 5;
+		int Size = 5;
 
 	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
-	float PooledActorLifespan = 0.0f;
+		float PooledActorLifespan = 0.0f;
 
 	UFUNCTION(Server, Reliable)
-	void OnDespawn(APoolableActor* PoolActor);
+		void OnDespawn(APoolableActor* PoolActor);
 
 	void SetActorsHaveLifespan(bool actorshaveLifespan);
 	void SetActorLifespan(float actorLifespan);
@@ -49,12 +49,12 @@ public:
 
 	// Actor class to be spawned
 	UPROPERTY(Replicated, EditAnywhere)
-	TSubclassOf<class APoolableActor> PoolableActorClass;
+		TSubclassOf<class APoolableActor> PoolableActorClass;
 
 	UPROPERTY(Replicated)
-	bool HasActorWaiting = false;
+		bool HasActorWaiting = false;
 	UPROPERTY(Replicated)
-	APoolableActor* WaitingActor;
+		APoolableActor* WaitingActor;
 
 protected:
 	// called when the game starts
@@ -62,24 +62,24 @@ protected:
 
 	// Internal function for activating any actor
 	UFUNCTION(Server, Reliable)
-	void ActivateActor(APoolableActor* pooledActor);
+		void ActivateActor(APoolableActor* pooledActor);
 
 	// Actors pooled
 	UPROPERTY(Replicated)
-	TArray<APoolableActor*> PooledActors;
+		TArray<APoolableActor*> PooledActors;
 
 	// Indexes of actors pooled
 	UPROPERTY(Replicated)
-	TArray<int> PooledActorIndexes;
+		TArray<int> PooledActorIndexes;
 
 	// Whether the actors pooled in this pool have a set lifespan after being spawned
 	UPROPERTY(Replicated)
-	bool ActorsHaveLifespan = false;
+		bool ActorsHaveLifespan = false;
 
 	// Whether the actors managed by this pool should despawn the oldest existing actor 
 	// to supply requested new instances (alternatively, it will fail to activate one while empty)	
 	UPROPERTY(Replicated)
-	bool UseActiveAfterRunningOut = true;
+		bool UseActiveAfterRunningOut = true;
 
 	// Assists in firing of projectiles for weapons
 	UArrowComponent* FireArrow;

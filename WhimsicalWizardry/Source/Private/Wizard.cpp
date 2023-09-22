@@ -64,9 +64,9 @@ AWizard::AWizard()
 
 	// Create magic missile firing 
 	MagicMissileFiring = CreateDefaultSubobject<UMagicMissileFiring>("Magic Missile Firing Component");
-	MagicMissileFiring->SetFireArrow(FiringArrow); 
-	MagicMissilePool = CreateDefaultSubobject<UActorPool>("Magic Missile Pool"); 
-	MagicMissilePool->SetFireComponent(FiringArrow); 
+	MagicMissileFiring->SetFireArrow(FiringArrow);
+	MagicMissilePool = CreateDefaultSubobject<UActorPool>("Magic Missile Pool");
+	MagicMissilePool->SetFireComponent(FiringArrow);
 	MagicMissilePool->SetSizeOfPool(MagicMissilePoolAmount);
 }
 
@@ -105,7 +105,7 @@ void AWizard::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompon
 
 		//Firing item spells
 		EnhancedInputComponent->BindAction(FireItemSpellAction, ETriggerEvent::Triggered, this, &AWizard::FireItemSpell);
-		
+
 		//Firing basic magic missile
 		EnhancedInputComponent->BindAction(FireMagicMissileAction, ETriggerEvent::Triggered, this, &AWizard::FireMagicMissile);
 
@@ -164,10 +164,12 @@ void AWizard::FireItemSpell()
 
 void AWizard::FireMagicMissile()
 {
-	MagicMissileFiring->StartFire(); 
+	MagicMissileFiring->StartFire();
 }
 
-void AWizard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-}
+//void AWizard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//
+//
+//}
