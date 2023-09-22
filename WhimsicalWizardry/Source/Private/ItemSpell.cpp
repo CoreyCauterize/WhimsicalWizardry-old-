@@ -2,6 +2,7 @@
 
 
 #include "ItemSpell.h"
+#include "SpellInventoryComponent.h"
 
 // Sets default values
 AItemSpell::AItemSpell()
@@ -24,9 +25,14 @@ void AItemSpell::Tick(float DeltaTime)
 
 }
 
-void AItemSpell::OnFire(class USpellInventoryComponent* belongingInventory)
+void AItemSpell::OnFire(USpellInventoryComponent* belongingInventory)
 {
 
+	if (removeFromInventoryOnFired)
+	{
+		belongingInventory->CycleSpells();
+		Destroy();
+	}
 }
 
 

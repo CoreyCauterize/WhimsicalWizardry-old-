@@ -41,7 +41,10 @@ public:
 	TArray<AItemSpell*> GetHeldSpells() { return heldSpells; }
 
 	UFUNCTION()
-	void TryAddSpell(AItemSpell* spellToAdd);
+	void TryAddSpell(AItemSpell* spellToAdd = nullptr);
+
+	UFUNCTION()
+	void CycleSpells();
 
 
 //STUFF TO BE MOVED:
@@ -52,6 +55,6 @@ public:
 
 protected:
 
-	TArray<TSubclassOf<AItemSpell>> m_ListOfAllSpells;
+	TArray<UClass*> m_ListOfAllSpells;
 		
 };
