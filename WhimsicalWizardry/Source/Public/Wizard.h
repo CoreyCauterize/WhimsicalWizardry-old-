@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "WimsicalWizardryPlayerState.h"
 #include "Wizard.generated.h"
 
 
@@ -63,7 +64,6 @@ protected:
 
 	/** Called for firing item spell input */
 	void FireItemSpell();
-
 
 protected:
 	// APawn interface

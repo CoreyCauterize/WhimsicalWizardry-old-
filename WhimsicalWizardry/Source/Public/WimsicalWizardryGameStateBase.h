@@ -6,6 +6,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "WimsicalWizardryGameStateBase.generated.h"
 
+
 /**
  * 
  */
@@ -16,12 +17,16 @@ class WHIMSICALWIZARDRY_API AWimsicalWizardryGameStateBase : public AGameStateBa
 	
 public:
 
+	bool lastPlayerStanding();
+
 	UFUNCTION(BlueprintCallable, Category = "Score")
 		int GetPlayer0Score();
 
 	UFUNCTION(BlueprintCallable, Category = "Score")
 		int GetPlayer1Score();
-	
+
+private:
+	UPROPERTY()
 	int m_player0Score;
 	int m_player1Score;
 };

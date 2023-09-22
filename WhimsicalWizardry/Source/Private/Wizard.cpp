@@ -12,6 +12,8 @@
 #include "PlayerKnockedOffComponent.h"
 #include "SpellInventoryComponent.h"
 #include "ItemSpell.h"
+#include "Public/WhimsicalWizardryGameModeBase.h"
+#include "Public/WimsicalWizardryGameStateBase.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AWizard

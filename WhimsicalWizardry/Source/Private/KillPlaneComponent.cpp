@@ -49,11 +49,10 @@ void UKillPlaneComponent::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherA
 
 		AWimsicalWizardryGameStateBase* gameState = gameMode->GetGameState<AWimsicalWizardryGameStateBase>();
 
-		AWimsicalWizardryPlayerState* playerState = Cast<AWimsicalWizardryPlayerState>(gameState->PlayerArray[0]);
+		
+		//playerState->m_playerScore++;
 
-		playerState->m_playerScore++;
-
-		gameState->m_player0Score++;
+		//gameState->m_player0Score++;
 
 		/*
 		TArray<TObjectPtr<APlayerState>> PlayerArray;
