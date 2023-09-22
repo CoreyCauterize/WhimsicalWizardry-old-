@@ -1,20 +1,21 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright 2023 Silver Standard Studios (based on the base ACharacter by Epic Games, Inc.) All Rights Reserved.
 
-#include "Wizard.h"
-#include "Camera/CameraComponent.h"
+#include "Wizard.h"						// internal inclusions
+#include "ItemSpell.h"
+#include "PlayerKnockedOffComponent.h"
+#include "Pooling/ActorPool.h"
+#include "Pooling/PoolableActor.h"
+#include "ProjectileFiring/MagicMissileFiring.h"
+#include "SpellInventoryComponent.h"
+#include "Camera/CameraComponent.h"		// unreal inclusions
+#include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "PlayerKnockedOffComponent.h"
-#include "SpellInventoryComponent.h"
-#include "ItemSpell.h"
-
-//////////////////////////////////////////////////////////////////////////
-// AWizard
 
 AWizard::AWizard()
 {
@@ -57,6 +58,16 @@ AWizard::AWizard()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	// Create firing arrow for projectiles
+	FiringArrow = CreateDefaultSubobject<UArrowComponent>("Firing Arrow");
+
+	// Create magic missile firing 
+	MagicMissileFiring = CreateDefaultSubobject<UMagicMissileFiring>("Magic Missile Firing Component");
+	MagicMissileFiring->SetFireArrow(FiringArrow); 
+	MagicMissilePool = CreateDefaultSubobject<UActorPool>("Magic Missile Pool"); 
+	MagicMissilePool->SetFireComponent(FiringArrow); 
+	MagicMissilePool->SetSizeOfPool(MagicMissilePoolAmount);
 }
 
 void AWizard::BeginPlay()
@@ -94,6 +105,9 @@ void AWizard::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompon
 
 		//Firing item spells
 		EnhancedInputComponent->BindAction(FireItemSpellAction, ETriggerEvent::Triggered, this, &AWizard::FireItemSpell);
+		
+		//Firing basic magic missile
+		EnhancedInputComponent->BindAction(FireMagicMissileAction, ETriggerEvent::Triggered, this, &AWizard::FireMagicMissile);
 
 	}
 
@@ -148,3 +162,12 @@ void AWizard::FireItemSpell()
 	}
 }
 
+void AWizard::FireMagicMissile()
+{
+	MagicMissileFiring->StartFire(); 
+}
+
+void AWizard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}

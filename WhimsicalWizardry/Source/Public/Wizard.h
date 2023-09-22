@@ -1,4 +1,12 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+/*	Copyright 2023 Silver Standard Studios (based on base ACharacter by Epic Games, Inc. All rights reserved.
+ 
+	Component allowing a controlled character to fire basic magical
+	projectiles that don't require getting a pickup.			*/
+
+	/*	Changelog
+		2023-15-08 - Created
+		2023-15-09 - Added magic missile firing
+		*/
 
 #pragma once
 
@@ -13,8 +21,8 @@ class AWizard : public ACharacter
 {
 	GENERATED_BODY()
 
-		/** Camera boom positioning the camera behind the character */
-		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	/** Camera boom positioning the camera behind the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
@@ -49,6 +57,26 @@ class AWizard : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* FireItemSpellAction;
 
+	// Fire basic magic missile
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* FireMagicMissileAction;
+
+	// Basic magic missile firing
+	UPROPERTY(EditAnywhere, Category = "Magic Missile")
+		class UMagicMissileFiring* MagicMissileFiring = nullptr; 
+	// Magic missile pool
+	UPROPERTY(EditAnywhere, Category = "Magic Missile")
+		class UActorPool* MagicMissilePool = nullptr; 
+	UPROPERTY(EditAnywhere, Category = "Magic Missile")
+		int MagicMissilePoolAmount = 15; 
+	// Magic missile class (must be a poolable actor)
+	UPROPERTY(Replicated, EditAnywhere)
+		TSubclassOf<class APoolableActor> MagicMissileClass = nullptr; 
+	// FiringArrow
+	UPROPERTY(EditAnywhere, Category = "FiringArrow")
+		class UArrowComponent* FiringArrow = nullptr; 
+
+
 public:
 	AWizard();
 
@@ -63,6 +91,9 @@ protected:
 
 	/** Called for firing item spell input */
 	void FireItemSpell();
+
+	// Called for firing basic magic missile
+	void FireMagicMissile();
 
 
 protected:
