@@ -3,6 +3,7 @@
 
 #include "SpellInventoryComponent.h"
 #include "ItemSpell.h"
+#include "ItemSpells/Spell/Fireball.h"
 
 // Sets default values for this component's properties
 USpellInventoryComponent::USpellInventoryComponent()
@@ -16,6 +17,9 @@ USpellInventoryComponent::USpellInventoryComponent()
 		heldSpells.Add(nullptr);
 	}
 
+	//TEMP (Rolling functionality to be moved to a static struct or something):
+	m_ListOfAllSpells.Add(AFireball::StaticClass());
+
 	// ...
 }
 
@@ -24,6 +28,9 @@ USpellInventoryComponent::USpellInventoryComponent()
 void USpellInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//TEMP FOR DEBUGGING:
+	TryAddSpell();
 
 	// ...
 	
@@ -52,6 +59,33 @@ void USpellInventoryComponent::TryAddSpell(AItemSpell* spellToAdd)
 			}
 		}
 	}
+	else
+	{
+		AItemSpell* rolledSpell = RollSpell();
+
+		for (int i = 0; i < MAX_NUM_SPELLS; i++)
+		{
+			if (heldSpells[i] == nullptr)
+			{
+				heldSpells[i] = rolledSpell;
+				rolledSpell->OnRolled();
+				return;
+			}
+		}
+	}
+}
+
+void USpellInventoryComponent::CycleSpells()
+{
+	for (int i = 0; i < heldSpells.Num(); i++)
+	{
+		heldSpells[i] = nullptr;
+
+		if (i != heldSpells.Num() - 1)
+		{
+			heldSpells[i] = heldSpells[i + 1];
+		}
+	}
 }
 
 AItemSpell* USpellInventoryComponent::RollSpell()
@@ -60,7 +94,9 @@ AItemSpell* USpellInventoryComponent::RollSpell()
 	{
 		int spellNum = FMath::RandRange(0, m_ListOfAllSpells.Num() - 1);
 
-		return Cast<AItemSpell>(m_ListOfAllSpells[spellNum]);
+		AItemSpell* rolledSpell = Cast<AItemSpell>(GetWorld()->SpawnActor(m_ListOfAllSpells[spellNum]));
+
+		return rolledSpell;
 	}
 	return nullptr;
 }

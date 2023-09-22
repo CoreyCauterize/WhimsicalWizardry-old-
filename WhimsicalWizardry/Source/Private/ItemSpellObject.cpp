@@ -2,6 +2,7 @@
 
 
 #include "ItemSpellObject.h"
+#include "UObject/ConstructorHelpers.h"
 
 // Sets default values
 AItemSpellObject::AItemSpellObject()
@@ -16,6 +17,11 @@ void AItemSpellObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
+
+	if (needsToCallOnLifetimeEnd)
+	{
+		GetWorld()->GetTimerManager().SetTimer(LifetimeEndTimerHandle, this, &AItemSpellObject::OnLifetimeEnd, lifetime);
+	}
 }
 
 // Called every frame
