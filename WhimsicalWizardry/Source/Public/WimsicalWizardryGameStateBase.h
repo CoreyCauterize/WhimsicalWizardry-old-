@@ -19,6 +19,8 @@ public:
 
 	bool lastPlayerStanding();
 
+	void score();
+
 	UFUNCTION(BlueprintCallable, Category = "Score")
 		int GetPlayer0Score();
 
@@ -26,7 +28,6 @@ public:
 		int GetPlayer1Score();
 
 private:
-	UPROPERTY()
 	int m_player0Score;
 	int m_player1Score;
 };

@@ -6,7 +6,9 @@
 #include "Public/WhimsicalWizardryGameModeBase.h"
 #include "Public/WimsicalWizardryGameStateBase.h"
 #include "Public/WimsicalWizardryPlayerState.h"
+#include "Public/Wizard.h"
 #include "GameFramework/Character.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
 UKillPlaneComponent::UKillPlaneComponent()
@@ -24,8 +26,12 @@ void UKillPlaneComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetOwner()->OnActorBeginOverlap.AddDynamic(this, &UKillPlaneComponent::OnOverlapBegin);
+	SetIsReplicated(true);
 
+	if (GetOwner()->GetLocalRole() == ROLE_Authority)
+	{
+		GetOwner()->OnActorBeginOverlap.AddDynamic(this, &UKillPlaneComponent::OnOverlapBegin);
+	}
 	// ...
 	
 }
@@ -44,41 +50,22 @@ void UKillPlaneComponent::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherA
 {
 	if (OtherActor && OtherActor != GetOwner())
 	{
+		AWhimsicalWizardryGameModeBase* wWGameMode = Cast<AWhimsicalWizardryGameModeBase>(GetWorld()->GetAuthGameMode());
 
-		AWhimsicalWizardryGameModeBase* gameMode = Cast<AWhimsicalWizardryGameModeBase>(GetWorld()->GetAuthGameMode());
+		AWimsicalWizardryGameStateBase* wWGameState = wWGameMode->GetGameState<AWimsicalWizardryGameStateBase>();
 
-		AWimsicalWizardryGameStateBase* gameState = gameMode->GetGameState<AWimsicalWizardryGameStateBase>();
+		AWizard* collidingWizard = Cast<AWizard>(OtherActor);
 
+		AWimsicalWizardryPlayerState* wWPlayerState;
 		
-		//playerState->m_playerScore++;
+		wWPlayerState = Cast<AWimsicalWizardryPlayerState>(collidingWizard->GetPlayerState());
 
-		//gameState->m_player0Score++;
+		wWPlayerState->takePlayerLife();
 
-		/*
-		TArray<TObjectPtr<APlayerState>> PlayerArray;
-		//Add Logic here
-		if (gameState)
+		if (wWGameState->lastPlayerStanding())
 		{
-			PlayerArray = gameState->PlayerArray;
+			wWGameState->score();
 		}
-
-		ACharacter* OtherCharacter = Cast<ACharacter>(OtherActor);
-		AWimsicalWizardryPlayerState* PState = Cast<AWimsicalWizardryPlayerState>(OtherCharacter->GetPlayerState());
-
-		if (PState)
-		{
-
-			for (int i = 0; i < PlayerArray.Num(); i++)
-			{
-
-					if (PState == PlayerArray[i])
-					{
-						//This should be the matching player's state
-						int j = 0;
-					}
-			}
-		}
-		*/
 
 		UPlayerKnockedOffComponent* knockedOffComp = OtherActor->GetComponentByClass<UPlayerKnockedOffComponent>();
 

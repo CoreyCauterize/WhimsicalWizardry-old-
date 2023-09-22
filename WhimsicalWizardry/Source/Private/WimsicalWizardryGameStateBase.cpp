@@ -10,7 +10,7 @@ bool AWimsicalWizardryGameStateBase::lastPlayerStanding()
 	bool lastStanding = true;
 	int numPlayersAlive = 0;
 	//If only one player standing that player wins. if not no one has yet
-	for (int i = 0; i < sizeof(PlayerArray); i++)
+	for (int i = 0; i < PlayerArray.Num(); i++)
 	{
 		wWPlayerState = Cast<AWimsicalWizardryPlayerState>(PlayerArray[i]);
 		if (wWPlayerState->getLives())
@@ -25,6 +25,18 @@ bool AWimsicalWizardryGameStateBase::lastPlayerStanding()
 	}
 
 	return lastStanding;
+}
+
+void AWimsicalWizardryGameStateBase::score()
+{
+	if (m_player0Score == 0)
+	{
+		m_player1Score++;
+	}
+	else if (m_player1Score == 0)
+	{
+		m_player0Score++;
+	}
 }
 
 int AWimsicalWizardryGameStateBase::GetPlayer0Score()
