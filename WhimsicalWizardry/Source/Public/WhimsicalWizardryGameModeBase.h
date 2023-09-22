@@ -14,4 +14,7 @@ class WHIMSICALWIZARDRY_API AWhimsicalWizardryGameModeBase : public AGameModeBas
 {
 	GENERATED_BODY()
 	
+public:
+	void AWhimsicalWizardryGameModeBase::PostLogin(APlayerController* NewPlayer) override;
+
 };
