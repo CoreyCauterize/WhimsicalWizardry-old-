@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "SpellInventoryComponent.h"
 #include "PickupBox.h"
+#include "SpellInventoryComponent.h"
 
 // Sets default values
 APickupBox::APickupBox()
@@ -39,7 +39,7 @@ void APickupBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor
 	USpellInventoryComponent* tempInv;
 	// Put Riley's method here when it is done, but for now I will disappear!
 	tempInv = Cast <USpellInventoryComponent>(wizard->GetComponentByClass(USpellInventoryComponent::StaticClass()));
-	tempInv->TryAddSpell(nullptr);
+	tempInv->TryAddSpell();
 	SetActorHiddenInGame(true);
 	
 }
