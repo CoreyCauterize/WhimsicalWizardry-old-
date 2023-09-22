@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "ItemSpell.generated.h"
 
+class USpellInventoryComponent;
+
 UCLASS(abstract)
 class WHIMSICALWIZARDRY_API AItemSpell : public AActor
 {
@@ -28,7 +30,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void OnFire(class USpellInventoryComponent* belongingInventory = nullptr);
+	virtual void OnFire(USpellInventoryComponent* belongingInventory);
 
 
 
