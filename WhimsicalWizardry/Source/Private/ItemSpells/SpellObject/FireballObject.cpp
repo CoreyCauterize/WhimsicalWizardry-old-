@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "Wizard.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 
 
@@ -20,8 +21,13 @@ AFireballObject::AFireballObject()
 
 	fireballCollision = CreateDefaultSubobject<UBoxComponent>("Fireball Collision");
 	SetRootComponent(fireballCollision);
+	
 	fireballCollision->SetBoxExtent(FVector(24, 24, 24)); //Todo: Make this a const in FireballObject header and adjust it to be the right size
-	fireballCollision->OnComponentBeginOverlap.AddDynamic(this, &AFireballObject::OnOverlapBegin);
+	
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		fireballCollision->OnComponentBeginOverlap.AddDynamic(this, &AFireballObject::OnOverlapBegin);
+	}
 
 	fireballVisual = CreateDefaultSubobject<UNiagaraComponent>("Fireball Visual");
 	fireballVisual->SetupAttachment(RootComponent);
@@ -76,6 +82,7 @@ void AFireballObject::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, A
 		FVector LaunchVector = FVector(1, 1, 2);
 
 		HitWizard->LaunchCharacter(LaunchVector * hitForceScale, false, false);
+		
 	}
 	else
 	{
@@ -83,4 +90,11 @@ void AFireballObject::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, A
 	}
 
 	Destroy();
+}
+
+void  AFireballObject::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFireballObject, fireballVisual);
 }

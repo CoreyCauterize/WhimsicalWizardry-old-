@@ -4,6 +4,8 @@
 #include "SpellInventoryComponent.h"
 #include "ItemSpell.h"
 #include "ItemSpells/Spell/Fireball.h"
+#include "Net/UnrealNetwork.h"
+
 
 // Sets default values for this component's properties
 USpellInventoryComponent::USpellInventoryComponent()
@@ -17,6 +19,8 @@ USpellInventoryComponent::USpellInventoryComponent()
 		heldSpells.Add(nullptr);
 	}
 
+	
+
 	//TEMP (Rolling functionality to be moved to a static struct or something):
 	m_ListOfAllSpells.Add(AFireball::StaticClass());
 
@@ -29,8 +33,7 @@ void USpellInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//TEMP FOR DEBUGGING:
-	TryAddSpell();
+	SetIsReplicated(true);
 
 	// ...
 	
@@ -99,4 +102,11 @@ AItemSpell* USpellInventoryComponent::RollSpell()
 		return rolledSpell;
 	}
 	return nullptr;
+}
+
+void  USpellInventoryComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps)const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USpellInventoryComponent, heldSpells);
 }

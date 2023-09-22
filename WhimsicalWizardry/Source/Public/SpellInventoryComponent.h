@@ -25,7 +25,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Replicated) //todo: figure out how this shit works
 		TArray<AItemSpell*> heldSpells;
 
 	const int MAX_NUM_SPELLS = 2;
@@ -45,6 +45,8 @@ public:
 
 	UFUNCTION()
 	void CycleSpells();
+
+
 
 
 //STUFF TO BE MOVED:

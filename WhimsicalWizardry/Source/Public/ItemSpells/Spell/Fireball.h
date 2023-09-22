@@ -18,6 +18,10 @@ public:
 
 	AFireball();
 
+	//UFUNCTION(Server, Reliable)
+	void Server_OnFire_Implementation(USpellInventoryComponent* belongingInventory) override;
+	//virtual void Server_OnFire(USpellInventoryComponent* belongingInventory) override;
+
 	virtual void OnFire(USpellInventoryComponent* belongingInventory) override;
 
 protected:

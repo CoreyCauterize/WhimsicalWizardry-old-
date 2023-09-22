@@ -24,7 +24,10 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float lifetime;
 
+
+	UPROPERTY(Replicated)
 	float hitForceScale;
+
 	bool needsToCallOnLifetimeEnd;
 
 	FTimerHandle LifetimeEndTimerHandle;

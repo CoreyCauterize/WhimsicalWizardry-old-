@@ -12,7 +12,7 @@ AFireball::AFireball()
 	removeFromInventoryOnFired = true; //I think it's stupid you can't do this in the initializer list
 }
 
-void AFireball::OnFire(USpellInventoryComponent* belongingInventory)
+void AFireball::Server_OnFire_Implementation(USpellInventoryComponent* belongingInventory)
 {
 	FVector initialLocation = belongingInventory->GetOwner()->GetActorLocation();
 
@@ -28,15 +28,35 @@ void AFireball::OnFire(USpellInventoryComponent* belongingInventory)
 		spawnLocation = initialLocation + (spawnVelocity.GetSafeNormal() * 60); //Todo: Make the hardcoded 60 a member variable in ItemSpell
 		spawnRotation = castingCharacter->GetActorRotation();
 
-		AFireballObject* spawnedFireball = Cast<AFireballObject>(GetWorld()->SpawnActor<AFireballObject>(spawnLocation, spawnRotation));
+		FActorSpawnParameters spawnParams;
 
-		spawnedFireball->SetVelocity(spawnVelocity);
+		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		AActor* spawnedFireballActor = GetWorld()->SpawnActor<AFireballObject>(spawnLocation, spawnRotation, spawnParams);
+
+		AFireballObject* spawnedFireball = Cast<AFireballObject>(spawnedFireballActor);
+
+
+		if (spawnedFireball)
+		{
+			spawnedFireball->SetVelocity(spawnVelocity);
+		}
 	}
 	else //This is not a character casting this, so just send it in a random direction
 	{
 		//Todo: implement. Mostly for potions on that one level I think
 	}
 
-	Super::OnFire(belongingInventory);
+	Super::Server_OnFire_Implementation(belongingInventory);
+}
+
+void AFireball::OnFire(USpellInventoryComponent* belongingInventory)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		Server_OnFire(belongingInventory);
+	}
+
+	
 	
 }

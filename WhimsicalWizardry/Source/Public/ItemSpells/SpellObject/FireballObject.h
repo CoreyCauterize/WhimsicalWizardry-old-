@@ -28,7 +28,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 	class UNiagaraComponent* fireballVisual;
 
 	UPROPERTY(EditAnywhere)
