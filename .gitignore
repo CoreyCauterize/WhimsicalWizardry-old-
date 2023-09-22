@@ -75,5 +75,8 @@ DerivedDataCache/*
 /WhimsicalWizardry/Saved/*
 /WhimsicalWizardry/Intermediate/*
 /WhimsicalWizardry/Binaries/*
+/WhimsicalWizardry/Build/*
 /WhimsicalWizardry/Binaries/Win64/UnrealEditor-WhimsicalWizardry.dll
 /WhimsicalWizardry/Binaries/Win64/UnrealEditor-WhimsicalWizardry.pdb
+/WhimsicalWizardry/Plugins/GameFrwkSessionsPlugin/Intermediate/*
+/WhimsicalWizardry/Plugins/GameFrwkSessionsPlugin/Binaries/*
