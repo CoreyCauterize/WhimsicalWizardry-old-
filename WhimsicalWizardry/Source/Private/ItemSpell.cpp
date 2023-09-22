@@ -28,6 +28,11 @@ void AItemSpell::Tick(float DeltaTime)
 void AItemSpell::OnFire(USpellInventoryComponent* belongingInventory)
 {
 
+	if (removeFromInventoryOnFired)
+	{
+		belongingInventory->CycleSpells();
+		Destroy();
+	}
 }
 
 

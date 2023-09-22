@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "PlayerKnockedOffComponent.h"
+#include "SpellInventoryComponent.h"
+#include "ItemSpell.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AWizard
@@ -50,6 +52,9 @@ AWizard::AWizard()
 	// Creating the component for killplane logic
 	PlayerKnockedOffComponent = CreateDefaultSubobject<UPlayerKnockedOffComponent>("Player Knocked Off Component");
 
+	//Create the inventory
+	SpellInventoryComponent = CreateDefaultSubobject<USpellInventoryComponent>("Spell Inventory Component");
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -86,6 +91,9 @@ void AWizard::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompon
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AWizard::Look);
+
+		//Firing item spells
+		EnhancedInputComponent->BindAction(FireItemSpellAction, ETriggerEvent::Triggered, this, &AWizard::FireItemSpell);
 
 	}
 
@@ -124,6 +132,19 @@ void AWizard::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void AWizard::FireItemSpell()
+{
+	if (SpellInventoryComponent)
+	{
+		AItemSpell* firstSpell = SpellInventoryComponent->GetFirstHeldSpell();
+
+		if (firstSpell)
+		{
+			firstSpell->OnFire(SpellInventoryComponent);
+		}
 	}
 }
 

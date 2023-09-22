@@ -25,17 +25,18 @@ void AFireball::OnFire(USpellInventoryComponent* belongingInventory)
 	if (castingCharacter)
 	{
 		spawnVelocity = castingCharacter->GetActorForwardVector() * 3; //Todo: Make the hardcoded 3 a const member variable in Fireball
-		spawnLocation = initialLocation + (spawnVelocity.GetSafeNormal() * 1.5); //Todo: Make the hardcoded 1.5 a member variable in ItemSpell
+		spawnLocation = initialLocation + (spawnVelocity.GetSafeNormal() * 60); //Todo: Make the hardcoded 60 a member variable in ItemSpell
 		spawnRotation = castingCharacter->GetActorRotation();
 
-		AFireballObject* spawnedFireball = Cast<AFireballObject>(GetWorld()->SpawnActor(AFireballObject::StaticClass(), &spawnLocation, &spawnRotation));
+		AFireballObject* spawnedFireball = Cast<AFireballObject>(GetWorld()->SpawnActor<AFireballObject>(spawnLocation, spawnRotation));
 
 		spawnedFireball->SetVelocity(spawnVelocity);
 	}
 	else //This is not a character casting this, so just send it in a random direction
 	{
-		//Todo: implement. Mostly for potions.
+		//Todo: implement. Mostly for potions on that one level I think
 	}
 
+	Super::OnFire(belongingInventory);
 	
 }

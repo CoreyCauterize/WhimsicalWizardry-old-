@@ -20,7 +20,10 @@ protected:
 	virtual void BeginPlay() override;
 
 	bool isReflectable;
+
+	UPROPERTY(EditAnywhere)
 	float lifetime;
+
 	float hitForceScale;
 	bool needsToCallOnLifetimeEnd;
 
@@ -34,5 +37,7 @@ public:
 	virtual void OnLifetimeEnd();
 
 	virtual void OnReflected();
+
+
 
 };
