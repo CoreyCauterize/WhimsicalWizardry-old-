@@ -13,8 +13,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "Wizard.generated.h"
 
+#include "Wizard.generated.h"
 
 UCLASS(config = Game)
 class AWizard : public ACharacter
@@ -71,13 +71,15 @@ class AWizard : public ACharacter
 	// Magic missile class (must be a poolable actor)
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class APoolableActor> MagicMissileClass = nullptr;
+
 	// FiringArrow
 	UPROPERTY(EditAnywhere, Category = "FiringArrow")
-		class UArrowComponent* FiringArrow = nullptr;
-
+		class UArrowComponent* MagicMissileFiringArrow = nullptr;
 
 public:
 	AWizard();
+
+	UArrowComponent* GetMagicMissileFiringArrow();
 
 
 protected:

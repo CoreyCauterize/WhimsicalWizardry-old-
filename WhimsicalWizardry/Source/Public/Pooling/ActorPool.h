@@ -5,14 +5,15 @@
 	avoid repetitive object creation at runtime.
 	Can only pool actors that inherit from the PoolableActor class.	*/
 
-	/*	Changelog
-		2023-15-09 - Created
-		*/
+/*	Changelog
+	2023-15-09 - Created
+	*/
 
 #pragma once
 
+//#include "Components/ActorComponent.h"
+
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
 #include "ActorPool.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -21,66 +22,81 @@ class WHIMSICALWIZARDRY_API UActorPool : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	// Creates a pool with default properties which can be set
-	// in code with the setter functions below or in blueprint
 	UActorPool();
 
-	UFUNCTION(Server, Reliable, Category = "Actor Pool")
-		void ActivateAnActor();
+	/*	Activates an actor, automatically choosing the next one in the pool
+	and returning a pointer to it. Actor is set to spawn at origin by
+	default. It must then be manually teleported elsewhere.		*/
+	class APoolableActor* ActivateASpawnedActor();
 
-	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
-		int Size = 5;
+	// Called by poolableActors on deactivation to alert the actorPool to 
+	// put them back in the pool in the right spot in the list
+	void DeactivateActiveActor(class APoolableActor* activeActor);
 
-	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
-		float PooledActorLifespan = 0.0f;
+	// Sets the out of pool lifespan of actors spawned by this pool
+	void SetActorOutOfPoolLifespan(float actorOutOfPoolLifespan);
 
-	UFUNCTION(Server, Reliable)
-		void OnDespawn(APoolableActor* PoolActor);
+	// Sets whether actors in this pool have a lifespan for which they 
+	// can exist out of the pool before deactivating	
+	void SetPooledActorsHaveOutOfPoolLifespan(bool pooledActorsHaveOutOfPoolLifespan);
 
-	void SetActorsHaveLifespan(bool actorshaveLifespan);
-	void SetActorLifespan(float actorLifespan);
-	void SetPoolableActor(TSubclassOf<class APoolableActor> poolableActorClass);
-	void SetSizeOfPool(int size);
-	void SetUseActiveAfterRunningOut(bool useActiveAfterRunningout);
+	// Sets whether actors should collide when active
+	void SetPooledActorsShouldCollide(bool pooledActorsShouldCollide); 
 
-	// Assists in firing of projectiles for weapons				// REMOVE
-	class UArrowComponent* GetFireComponent();
-	void SetFireComponent(UArrowComponent* fireArrow);
+	// Sets whether actors should tick when active
+	void SetPooledActorsShouldTick(bool pooledActorsShouldTick); 
 
-	// Actor class to be spawned
-	UPROPERTY(Replicated, EditAnywhere)
+	// Sets the amount of actors this pool should spawn
+	void SetSizeOfPool(int size); 
+
+	/*	Sets whether the pool should deactivate actors spawned by it
+		when it has no already deactivated actors to activate upon a 
+		request for more actors (alternatively, such requests will 
+		fail to produce a new actor) */
+	void SetUseActiveActorsWhenEmpty(bool useActiveActorsWhenEmpty);
+
+	// Actor class to be spawned by this pool
+	UPROPERTY(EditAnywhere, Category = "Actor Pool")
 		TSubclassOf<class APoolableActor> PoolableActorClass;
 
-	UPROPERTY(Replicated)
-		bool HasActorWaiting = false;
-	UPROPERTY(Replicated)
-		APoolableActor* WaitingActor;
-
 protected:
-	// called when the game starts
+	// Called when the game starts. Spawns the actors to fill the pool. 
 	virtual void BeginPlay() override;
 
-	// Internal function for activating any actor
-	UFUNCTION(Server, Reliable)
-		void ActivateActor(APoolableActor* pooledActor);
+	// Time that actors spawned by this pool are allowed to exist 
+	// outside of the pool
+	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
+		float ActorOutOfPoolLifespan = 3.0f;
 
-	// Actors pooled
+	// Whether the actors in this pool have a set lifespan after being spawned
+	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
+		bool ActorsHaveOutOfPoolLifespan = true;
+
+	// Whether the actors in the pool should collide when out of the pool
+	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
+		bool ActorsCollide = true; 
+	
+	// Whether the actors in the pool should tick when out of the pool
+	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
+		bool ActorsTick = true; 
+		
+	// Amount of actors to be spawned by this pool
+	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
+		int Size = 10;
+
+	// Array of actors in this pool
+	TArray<APoolableActor*> ActorPool;
+
+	// Indexes of actors in this pool's array that are currently active
+	TArray<int> ActiveActorIndexes;
+
+	/*	Whether the pool should deactivate actors spawned by it 
+		when it has no already deactivated actors to activate 
+		upon a request for more actors (alternatively, such 
+		requests will fail to produce a new actor). 
+		This is usually only disabled for ammo systems and 
+		similar mechanics that require a specific pool size 
+		to be maintained									*/
 	UPROPERTY(Replicated)
-		TArray<APoolableActor*> PooledActors;
-
-	// Indexes of actors pooled
-	UPROPERTY(Replicated)
-		TArray<int> PooledActorIndexes;
-
-	// Whether the actors pooled in this pool have a set lifespan after being spawned
-	UPROPERTY(Replicated)
-		bool ActorsHaveLifespan = false;
-
-	// Whether the actors managed by this pool should despawn the oldest existing actor 
-	// to supply requested new instances (alternatively, it will fail to activate one while empty)	
-	UPROPERTY(Replicated)
-		bool UseActiveAfterRunningOut = true;
-
-	// Assists in firing of projectiles for weapons
-	UArrowComponent* FireArrow;
+		bool UseActiveActorsWhenEmpty = true; 
 };

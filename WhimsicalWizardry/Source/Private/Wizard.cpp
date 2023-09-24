@@ -70,6 +70,9 @@ AWizard::AWizard()
 	MagicMissilePool->SetSizeOfPool(MagicMissilePoolAmount);
 }
 
+UArrowComponent* AWizard::GetMagicMissileFiringArrow()
+	{ return MagicMissileFiringArrow; }
+
 void AWizard::BeginPlay()
 {
 	// Call the base class  

@@ -1,38 +1,39 @@
 /*	Copyright 2023 Silver Standard Studios.All Rights Reserved.
 	Derek Fallows
 
-	Base class for projectiles.
-	Inherits functionality from PoolableActor to allow the projectile to be pooled using an ActorPool.
-	Can be inherited from to represent any projectile with unique mechanics. */
+	Basic projectile fired by wizards without the need of a spell pickup. 
+	Inherits functionality from PoolableActor to allow the projectile 
+	to be pooled using an ActorPool.									*/
 
 /*	Changelog
 	2023-15-09 - Created
+	2023-09-24 - Renamed from projectile to magic missile since it is the 
+				 only class using this functionality in the prototype
 	*/
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "../Pooling/PoolableActor.h"
-#include "Projectile.generated.h"
 
-		// Base projectile class from which all projectiles (usually created by spells) inherit functionality
+#include "CoreMinimal.h"
+//#include "../Pooling/PoolableActor.h"
+#include "MagicMissile.generated.h"
 
 UCLASS()
-class WHIMSICALWIZARDRY_API AProjectile : public APoolableActor
+class WHIMSICALWIZARDRY_API AMagicMissile : public APoolableActor
 {
 	GENERATED_BODY()
 
 public:
-	AProjectile();
+	AMagicMissile();
 
 	// called every frame
 	virtual void Tick(float Deltatime) override;
 
 	// Takes projectile out of pool
-	virtual void Activate_Implementation() override;
+	virtual void Activate() override;
 
 	// Puts projectile back into pool
-	virtual void Deactivate_Implementation() override;
+	virtual void Deactivate() override;
 
 	// Collision capsule
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")

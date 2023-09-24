@@ -2,17 +2,18 @@
 // Derek Fallows
 
 #include "ProjectileFiring/MagicMissileFiring.h"	// internal inclusions
-#include "ProjectileFiring/Projectile.h"
+#include "ProjectileFiring/MagicMissile.h"
 #include "Pooling/ActorPool.h"
 #include "InputAction.h"
 #include "EnhancedInputComponent.h"
-#include "Components/ArrowComponent.h"	// unreal inclusions
+#include "Components/ActorComponent.h"	// unreal inclusions
+#include "Components/ArrowComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 // Weapon constants
 const float UMagicMissileFiring::BASE_FIRE_RATE = 0.25f;
-const float UMagicMissileFiring::PROJECTILE_LIFESPAN = 10.0f;
+const float UMagicMissileFiring::MAGIC_MISSILE_LIFESPAN = 10.0f;
 const FString UMagicMissileFiring::EMPTY_STRING = "";
 
 UMagicMissileFiring::UMagicMissileFiring() : FireRate(BASE_FIRE_RATE)
@@ -20,9 +21,12 @@ UMagicMissileFiring::UMagicMissileFiring() : FireRate(BASE_FIRE_RATE)
 	// This component doesn't need to tick. If this changes, remove this
 	PrimaryComponentTick.bCanEverTick = false;
 
-	ProjectilePool = CreateDefaultSubobject<UActorPool>("Projectile Pool", false);
-	ProjectilePool->SetActorsHaveLifespan(true);
-	ProjectilePool->SetActorLifespan(PROJECTILE_LIFESPAN);
+	ProjectilePool = CreateDefaultSubobject<UActorPool>("Magic Missile Pool", false);
+	ProjectilePool->SetPooledActorsHaveOutOfPoolLifespan(true); 
+	ProjectilePool->SetActorOutOfPoolLifespan(MAGIC_MISSILE_LIFESPAN);
+	ProjectilePool->SetPooledActorsShouldCollide(true); 
+	ProjectilePool->SetPooledActorsShouldTick(false);
+	ProjectilePool->SetSizeOfPool(MAGIC_MISSILE_AMOUNT);
 
 	SetIsReplicatedByDefault(true);
 }
@@ -31,36 +35,32 @@ UMagicMissileFiring::UMagicMissileFiring() : FireRate(BASE_FIRE_RATE)
 void UMagicMissileFiring::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Allows the pool of projectiles to have access to the fire arrow
-	ProjectilePool->SetFireComponent(FireArrow);
-
-	//InputComponent->BindAction()
 }
 
 /* Called every frame.
    DeltaTime        - Time since last update
    ELevelTick       - The type of tick
    ThisTickFunction - Pointer to this tick function	*/
-void UMagicMissileFiring::TickComponent(float DeltaTime, ELevelTick TickType,
-	FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+//void UMagicMissileFiring::TickComponent(float DeltaTime, ELevelTick TickType,
+//	FActorComponentTickFunction* ThisTickFunction)
+//{
+//	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+//}
 
-	if (bWaitingForProjectileFromPool == true && ProjectilePool->HasActorWaiting == true)
-	{
-		LateFireProjectile(ProjectilePool->WaitingActor);
-		bWaitingForProjectileFromPool = false;
-		ProjectilePool->HasActorWaiting = false;
-		ProjectilePool->WaitingActor = nullptr;
-	}
+
+// Gets the firing arrow the component fires from
+// (usually attached to and set by the owner)
+UArrowComponent* UMagicMissileFiring::GetFiringArrow()
+{
+	check(FiringArrow != nullptr); 
+	return FiringArrow;
 }
 
 // Sets up the FireArrow the component fires from
-void UMagicMissileFiring::SetFireArrow(UArrowComponent* fireArrow)
+void UMagicMissileFiring::SetFiringArrow(UArrowComponent* firingArrow)
 {
-	check(fireArrow != nullptr);
-	FireArrow = fireArrow;
+	check(firingArrow != nullptr)
+	FiringArrow = firingArrow;
 }
 
 // Begins projectile fire sequence. 

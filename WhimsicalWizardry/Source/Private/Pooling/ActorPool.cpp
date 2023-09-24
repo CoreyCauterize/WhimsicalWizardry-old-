@@ -8,147 +8,153 @@
 UActorPool::UActorPool()
 {
 	SetIsReplicatedByDefault(true);
-	UWorld* world = GetWorld();
-	for (int i = 0; i < 1; i++)
-	{
-		if (world)
-		{
-			APoolableActor* poolActor =													// CURRENT ISSUE
-				world->SpawnActor<APoolableActor>(
-					FVector(FVector::ZeroVector), FRotator(FRotator::ZeroRotator));
-
-		}
-		
-		//check(poolActor != nullptr);
-
-		//poolActor->SetPool(this);
-		//poolActor->SetActorIndex(i);
-		//poolActor->OnDespawn.AddDynamic(this, &UActorPool::OnDespawn);
-		//PooledActors.Add(poolActor);
-		//poolActor->Deactivate();
-	}
 }
 
+// Called when the game starts. Spawns the actors to fill the pool. 
 void UActorPool::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (PoolableActorClass == nullptr)
+	if (PoolableActorClass != nullptr)
 	{
-		return;
-	}
-
-	
-	//check(world != nullptr);
-
-	
-}
-
-// Activates an actor (internal function used by the ActivateAnActor function) 
-void UActorPool::ActivateActor_Implementation(APoolableActor* pooledActor)
-{
-	pooledActor->TeleportTo(FVector::ZeroVector, FRotator::ZeroRotator);
-
-	if (ActorsHaveLifespan == true)
-	{
-		pooledActor->SetHasLifespan(true);
-		pooledActor->SetLifeSpan(PooledActorLifespan);
-	}
-
-	pooledActor->Activate();
-	PooledActorIndexes.Add(pooledActor->GetActorIndex());
-}
-
-// Activates an actor from the pool. If it fails to activate an actor, will 
-// instead activate one that already exists in the world 
-void UActorPool::ActivateAnActor_Implementation()
-{
-	for (APoolableActor* pooledActor : PooledActors)
-	{
-		check(pooledActor != nullptr);
-		if (pooledActor->GetActiveState() == false)
+		// Spawns a number of actors based on the size of the pool
+		UWorld* const world = GetWorld(); 
+		check(world != nullptr); 
+		for (int i = 0; i < Size; i++)
 		{
-			ActivateActor(pooledActor);
-			WaitingActor = pooledActor;
-			HasActorWaiting = true;
-			return;
+			// Spawns an actor
+			APoolableActor* poolableActor = world->SpawnActor<APoolableActor>(
+													PoolableActorClass, 
+													FVector().ZeroVector, 
+													FRotator().ZeroRotator); 
+			if (poolableActor != nullptr)
+			{
+				// Deactivates the actor's functionality until it is activated again
+				poolableActor->SetActiveState(false); 
+				poolableActor->SetActorHiddenInGame(true); 
+				poolableActor->SetActorEnableCollision(false); 
+				poolableActor->SetActorTickEnabled(false);
+
+				// Sets the actor's properties based on this pool's properties
+				poolableActor->SetHasOutOfPoolLifespan(ActorsHaveOutOfPoolLifespan);
+				poolableActor->SetIfPooledActorShouldCollide(ActorsCollide); 
+				poolableActor->SetIfPooledActorShouldTick(ActorsTick);
+				poolableActor->SetOutOfPoolLifespan(ActorOutOfPoolLifespan);
+				poolableActor->SetSpawningActorPool(this);
+
+				// Adds the actor to the pool
+				poolableActor->SetPoolIndex(i);
+				ActorPool.Add(poolableActor); 
+			}
+		}
+	}
+}
+
+/*	Activates an actor, automatically choosing the next one in the pool
+	and returning a pointer to it. Actor is set to spawn at origin by
+	default. It must then be manually teleported elsewhere.		*/
+APoolableActor* UActorPool::ActivateASpawnedActor()
+{
+	// activates an actor for use
+	for (APoolableActor* poolableActor : ActorPool)
+	{
+		// Only activates an actor this way if it is in the pool and is not active
+		if (poolableActor != nullptr && poolableActor->GetActiveState() == false)
+		{
+			// Teleports the actor to origin to prevent any 
+			// interference from its previous position
+			poolableActor->TeleportTo(FVector().ZeroVector, 
+									FRotator().ZeroRotator);
+
+			// Re-enables the actor's functionality
+			poolableActor->Activate(); 
+
+			// Adds the actor's index to an array of active 
+			// indexes to keep track of it
+			ActiveActorIndexes.Add(poolableActor->GetPoolIndex()); 
+			
+			// Returns a ptr to the actor so it can be identified 
+			// by the class that called for it
+			return poolableActor; 
 		}
 	}
 
-	if (PooledActorIndexes.Num() > 0 && UseActiveAfterRunningOut == true)
+	// If the above failed to produce a valid actor (usually because all actors 
+	// in the pool are active) and the pool is allowed to deactivate actors to 
+	// fill requests for actors, it does so. 
+	if (ActiveActorIndexes.Num() > 0 && UseActiveActorsWhenEmpty == true)
 	{
-		int pooledActorIndex = PooledActorIndexes[0];
-		PooledActorIndexes.Remove(pooledActorIndex);
-		APoolableActor* pooledActor = PooledActors[pooledActorIndex];
-		check(pooledActor != nullptr);
+		// Gets unique index of oldest active pooled actor in the scene
+		int requiredActorIndex = ActiveActorIndexes[0]; 
 
-		pooledActor->Deactivate();
-		ActivateActor(pooledActor);
-		PooledActorIndexes.Add(pooledActor->GetActorIndex());
-		WaitingActor = pooledActor;
-		HasActorWaiting = true;
-		return;
+		// Remove that unique index from the array of active actors since
+		// it is to be deactivated and reactivated
+		ActiveActorIndexes.Remove(requiredActorIndex);
+
+		// Gets a ptr to the actor at that index
+		APoolableActor* requiredActor = ActorPool[requiredActorIndex];
+
+		if (requiredActor != nullptr)
+		{
+			// Teleports the actor to origin to prevent any 
+			// interference from its previous position
+			requiredActor->TeleportTo(FVector().ZeroVector,
+				FRotator().ZeroRotator); 
+			requiredActor->Activate();
+			// Adds the actor's index to an array of active 
+			// indexes to keep track of it
+			ActiveActorIndexes.Add(requiredActor->GetPoolIndex());
+			// Returns a ptr to the actor so it can be identified 
+			// by the class that called for it
+			return requiredActor;
+		}
 	}
 }
 
-// Called automatically when deactivating an actor using the OnDespawn Delegate in PoolableActor
-void UActorPool::OnDespawn_Implementation(APoolableActor* PoolActor)
-{
-	PooledActorIndexes.Remove(PoolActor->GetActorIndex());
+// Called by poolableActors on deactivation to alert the actorPool to 
+// remove them from the active actors index list
+void UActorPool::DeactivateActiveActor(APoolableActor* activeActor)
+{ 
+	// Remove the actor's unique index from the array of active actors 
+	ActiveActorIndexes.Remove(activeActor->GetPoolIndex());
 }
 
-// Sets whether the actors in the pool will only exist in the world for a set period of time
-void UActorPool::SetActorsHaveLifespan(bool actorsHaveLifespan)
-{
-	ActorsHaveLifespan = actorsHaveLifespan;
-}
+// Sets the out of pool lifespan of actors spawned by this pool
+void UActorPool::SetActorOutOfPoolLifespan(float actorOutOfPoolLifespan)
+	{ ActorOutOfPoolLifespan = actorOutOfPoolLifespan; }
 
-// Sets the time that the actors will exist in the world, 
-// if they are only set to exist in the world for a set time
-void UActorPool::SetActorLifespan(float actorLifespan)
-{
-	PooledActorLifespan = actorLifespan;
-}
+// Sets whether actors in this pool have a lifespan for which they 
+// can exist out of the pool before deactivating	
+void UActorPool::SetPooledActorsHaveOutOfPoolLifespan(bool pooledActorsHaveOutOfPoolLifespan)
+	{ ActorsHaveOutOfPoolLifespan = pooledActorsHaveOutOfPoolLifespan; }
 
-void UActorPool::SetPoolableActor(TSubclassOf<class APoolableActor> poolableActorClass)
-{
-	PoolableActorClass = poolableActorClass;
-}
+// Sets whether actors should collide when active
+void UActorPool::SetPooledActorsShouldCollide(bool pooledActorsShouldCollide)
+	{ ActorsCollide = pooledActorsShouldCollide; }
 
-// Sets the amount of actors that will be in the pool in total
+// Sets whether actors should tick when active
+void UActorPool::SetPooledActorsShouldTick(bool pooledActorsShouldTick)
+	{ ActorsTick = pooledActorsShouldTick; }
+
+// Sets the amount of actors this pool should spawn
 void UActorPool::SetSizeOfPool(int size)
-{
-	Size = size;
-}
+	{ Size = size; }
 
-// Sets whether the pool will start using active actors once it runs out of inactive actors to use
-void UActorPool::SetUseActiveAfterRunningOut(bool useActiveAfterRunningOut)
-{
-	UseActiveAfterRunningOut = useActiveAfterRunningOut;
-}
-
-// Gets the fire component stored in the pool (used to help projectiles acess fireArrows
-UArrowComponent* UActorPool::GetFireComponent()
-{
-	return FireArrow;
-}
-
-// Sets up the fire component to be stored in the pool (used to help projectiles access fireArrows)
-void UActorPool::SetFireComponent(UArrowComponent* fireArrow)
-{
-	FireArrow = fireArrow;
-}
+/*	Sets whether the pool should deactivate actors spawned by it
+	when it has no already deactivated actors to activate upon a
+	request for more actors (alternatively, such requests will
+	fail to produce a new actor) */
+void UActorPool::SetUseActiveActorsWhenEmpty(bool useActiveActorsWhenEmpty)
+	{ UseActiveActorsWhenEmpty = useActiveActorsWhenEmpty; } 
 
 void UActorPool::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// Variables to be replicated
-	DOREPLIFETIME(UActorPool, ActorsHaveLifespan);
-	DOREPLIFETIME(UActorPool, HasActorWaiting);
-	DOREPLIFETIME(UActorPool, PoolableActorClass);
-	DOREPLIFETIME(UActorPool, PooledActorLifespan);
+	DOREPLIFETIME(UActorPool, ActorOutOfPoolLifespan);
+	DOREPLIFETIME(UActorPool, ActorsHaveOutOfPoolLifespan);
+	DOREPLIFETIME(UActorPool, ActorsCollide);
+	DOREPLIFETIME(UActorPool, ActorsTick);
 	DOREPLIFETIME(UActorPool, Size);
-	DOREPLIFETIME(UActorPool, UseActiveAfterRunningOut);
-	DOREPLIFETIME(UActorPool, WaitingActor);
 }

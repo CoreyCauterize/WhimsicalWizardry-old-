@@ -10,8 +10,9 @@
 
 #pragma once
 
+
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+//#include "Components/ActorComponent.h"
 #include "MagicMissileFiring.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -26,12 +27,18 @@ public:
 	   DeltaTime        - Time since last update
 	   ELevelTick       - The type of tick
 	   ThisTickFunction - Pointer to this tick function */
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-		FActorComponentTickFunction* ThisTickFunction) override;
+	/*virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+		FActorComponentTickFunction* ThisTickFunction) override;*/
 
-	// Sets up the FireArrow the component fires from
-	UFUNCTION(Category = "Gameplay")
-		void SetFireArrow(class UArrowComponent* owner);
+	// Gets the firing arrow the component fires from
+	// (usually attached to and set by the owner)
+	UFUNCTION(Category = "Firing")
+		class UArrowComponent* GetFiringArrow(); 
+
+	// Sets the firing arrow the component fires from
+	// (usually attached to and set by the owner)
+	UFUNCTION(Category = "Firing")
+		void SetFiringArrow(class UArrowComponent* firingArrow);
 
 	// Begins projectile fire sequence
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Gameplay")
@@ -87,10 +94,11 @@ protected:
 
 	// Arrow Component on actor, used to determine where to fire projectiles
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Gameplay")
-		UArrowComponent* FireArrow = nullptr;
-
+		UArrowComponent* FiringArrow = nullptr;
+		
 	// Firing constants
 	static const float BASE_FIRE_RATE;
-	static const float PROJECTILE_LIFESPAN;
+	static const float MAGIC_MISSILE_LIFESPAN;
+	static const int MAGIC_MISSILE_AMOUNT = 10;
 	static const FString EMPTY_STRING;
 };

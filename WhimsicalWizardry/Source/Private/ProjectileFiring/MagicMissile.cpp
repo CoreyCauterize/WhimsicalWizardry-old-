@@ -1,8 +1,11 @@
 //	Copyright 2023 Silver Standard Studios.All Rights Reserved.
 //	Derek Fallows
 
-#include "ProjectileFiring/Projectile.h"						// internal inclusions
+#include "ProjectileFiring/MagicMissile.h"						// internal inclusions
+#include "ProjectileFiring/MagicMissileFiring.h"
 #include "Pooling/ActorPool.h"
+#include "Pooling/PoolableActor.h"
+#include "Wizard.h"
 #include "Components/ArrowComponent.h"				// unreal inclusions
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -12,17 +15,17 @@
 #include "UObject/ConstructorHelpers.h"
 
 // Projectile Constants
-const float AProjectile::BASE_CAPSULE_SIZE_X = 20.0f;
-const float AProjectile::BASE_CAPSULE_SIZE_Y = 30.0f;
-const float AProjectile::BASE_GRAVITY = 1.0f;
-const float AProjectile::BASE_INITIAL_SPEED = 2500.0f;
-const float AProjectile::BASE_MAX_SPEED = 4000.0f;
+const float AMagicMissile::BASE_CAPSULE_SIZE_X = 20.0f;
+const float AMagicMissile::BASE_CAPSULE_SIZE_Y = 30.0f;
+const float AMagicMissile::BASE_GRAVITY = 1.0f;
+const float AMagicMissile::BASE_INITIAL_SPEED = 2500.0f;
+const float AMagicMissile::BASE_MAX_SPEED = 4000.0f;
 
 // Initializes projectile
-AProjectile::AProjectile()
+AMagicMissile::AMagicMissile()
 {
 	// Projectiles call Tick() every frame
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	// Set up collision capsule
 	CollisionCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RootComponent"));
@@ -48,26 +51,31 @@ AProjectile::AProjectile()
 }
 
 // Called when game starts or when spawned
-void AProjectile::BeginPlay()
+void AMagicMissile::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 // Called every frame
-void AProjectile::Tick(float DeltaTime)
+void AMagicMissile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
 // Take projectile out of the pool
-void AProjectile::Activate_Implementation()
+void AMagicMissile::Activate()
 {
 	APoolableActor::Activate();
 
-	// cause the projectile to start moving again
-	Movement->Activate(true);
+	// Cause the projectile to start moving again
+	Movement->Activate(true); 
 	Movement->SetUpdatedComponent(GetRootComponent());
-	Movement->SetVelocityInLocalSpace(GetPool()->GetFireComponent()->GetForwardVector() * Movement->InitialSpeed);
+
+	UMagicMissileFiring* firingComponent = 
+		Cast<UMagicMissileFiring>(GetSpawningActorPool()->GetOwner());
+
+	Movement->SetVelocityInLocalSpace(firingComponent->GetFiringArrow()
+	//firingComponent->GetFiringArrow()->GetForwardVector() * Movement->InitialSpeed); 
 
 	/*Movement->Velocity = GetPool()->GetFireComponent()->GetForwardVector()
 												* Movement->InitialSpeed;*/
@@ -75,7 +83,7 @@ void AProjectile::Activate_Implementation()
 }
 
 // Put projectile back into the pool
-void AProjectile::Deactivate_Implementation()
+void AMagicMissile::Deactivate()
 {
 	APoolableActor::Deactivate();
 }
@@ -84,7 +92,7 @@ void AProjectile::Deactivate_Implementation()
    Hitcomponent - Component of this actor hit | OtherActor - Actor hit
    OtherComp    - Component of other actor    | NormalImpulse - normal vector of collision
    Hit          - Hit result				  |											*/
-void AProjectile::OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+void AMagicMissile::OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	FVector spawnLocation = GetActorLocation();
