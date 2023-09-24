@@ -63,7 +63,7 @@ void UPickupSpawner::SpawnPickups()
 			chosenLoc = OutHits[i].Location;
 		}
 	}
-	Server_SpawnPickups(chosenLoc);
+	Server_SpawnPickups(chosenLoc + FVector(0,0,90));
 	
 	
 }
