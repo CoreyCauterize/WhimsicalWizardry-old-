@@ -29,12 +29,11 @@ void AHazard::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* O
 	{
 		return;
 	}
-	//Launches the player after being hit
-	wizard->LaunchCharacter(FVector(-50 * LaunchScale, 1, 100 * LaunchScale), true, false);
+	//Launches the player after being hit in the opposite direction
+	wizard->LaunchCharacter(FVector(wizard->GetActorForwardVector().X * -LaunchScale, wizard->GetActorForwardVector().Y * -LaunchScale, 2 * LaunchScale), true, false);
 
-	//-100 * LaunchScale, 1, 100 * LaunchScale
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Player Launched!"));
+	
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Player Launched!")); <-debug if needed
 }
 
 void AHazard::Tick(float DeltaTime)

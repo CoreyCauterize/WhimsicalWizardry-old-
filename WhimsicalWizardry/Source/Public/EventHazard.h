@@ -1,5 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+/*
+Hazard code written by Ibrahim Al Rai
+Code that deals with map hazards against the player
+*/
 #pragma once
 
 #include "CoreMinimal.h"

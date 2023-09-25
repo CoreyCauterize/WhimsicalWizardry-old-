@@ -27,7 +27,7 @@ public:
 	UCapsuleComponent* HazardHitbox;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float LaunchScale = 10;
+	float LaunchScale = 500;
 
 protected:
 	virtual void BeginPlay() override;
