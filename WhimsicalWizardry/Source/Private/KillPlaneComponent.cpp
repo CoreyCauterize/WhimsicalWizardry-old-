@@ -25,13 +25,9 @@ UKillPlaneComponent::UKillPlaneComponent()
 void UKillPlaneComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	if(GetOwnerRole() == ROLE_Authority)
+	GetOwner()->OnActorBeginOverlap.AddDynamic(this, &UKillPlaneComponent::OnOverlapBegin);
 
-	SetIsReplicated(true);
-
-	if (GetOwner()->GetLocalRole() == ROLE_Authority)
-	{
-		GetOwner()->OnActorBeginOverlap.AddDynamic(this, &UKillPlaneComponent::OnOverlapBegin);
-	}
 	// ...
 	
 }
@@ -65,6 +61,7 @@ void UKillPlaneComponent::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherA
 		if (wWGameState->lastPlayerStanding())
 		{
 			wWGameState->score();
+			wWGameState->resetGame();
 		}
 
 		UPlayerKnockedOffComponent* knockedOffComp = OtherActor->GetComponentByClass<UPlayerKnockedOffComponent>();
