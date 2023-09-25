@@ -7,7 +7,7 @@
 
 UActorPool::UActorPool()
 {
-	SetIsReplicatedByDefault(true);
+	//SetIsReplicatedByDefault(true);
 }
 
 // Called when the game starts. Spawns the actors to fill the pool. 
@@ -36,9 +36,9 @@ void UActorPool::BeginPlay()
 				poolableActor->SetActorTickEnabled(false);
 
 				// Sets the actor's properties based on this pool's properties
-				poolableActor->SetHasOutOfPoolLifespan(ActorsHaveOutOfPoolLifespan);
-				poolableActor->SetIfPooledActorShouldCollide(ActorsCollide); 
-				poolableActor->SetIfPooledActorShouldTick(ActorsTick);
+				poolableActor->SetHasOutOfPoolLifespan(bActorsHaveOutOfPoolLifespan);
+				poolableActor->SetIfPooledActorShouldCollide(bActorsCollide); 
+				poolableActor->SetIfPooledActorShouldTick(bActorsTick);
 				poolableActor->SetOutOfPoolLifespan(ActorOutOfPoolLifespan);
 				poolableActor->SetSpawningActorPool(this);
 
@@ -82,7 +82,7 @@ APoolableActor* UActorPool::ActivateASpawnedActor()
 	// If the above failed to produce a valid actor (usually because all actors 
 	// in the pool are active) and the pool is allowed to deactivate actors to 
 	// fill requests for actors, it does so. 
-	if (ActiveActorIndexes.Num() > 0 && UseActiveActorsWhenEmpty == true)
+	if (ActiveActorIndexes.Num() > 0 && bUseActiveActorsWhenEmpty == true)
 	{
 		// Gets unique index of oldest active pooled actor in the scene
 		int requiredActorIndex = ActiveActorIndexes[0]; 
@@ -109,12 +109,16 @@ APoolableActor* UActorPool::ActivateASpawnedActor()
 			return requiredActor;
 		}
 	}
+
+	return nullptr; 
 }
 
 // Called by poolableActors on deactivation to alert the actorPool to 
 // remove them from the active actors index list
 void UActorPool::DeactivateActiveActor(APoolableActor* activeActor)
 { 
+	//
+
 	// Remove the actor's unique index from the array of active actors 
 	ActiveActorIndexes.Remove(activeActor->GetPoolIndex());
 }
@@ -123,18 +127,22 @@ void UActorPool::DeactivateActiveActor(APoolableActor* activeActor)
 void UActorPool::SetActorOutOfPoolLifespan(float actorOutOfPoolLifespan)
 	{ ActorOutOfPoolLifespan = actorOutOfPoolLifespan; }
 
+// Sets the poolable actor class
+void UActorPool::SetPoolableActorClass(TSubclassOf<class APoolableActor> poolableActorClass)
+	{ PoolableActorClass = poolableActorClass; }
+
 // Sets whether actors in this pool have a lifespan for which they 
 // can exist out of the pool before deactivating	
 void UActorPool::SetPooledActorsHaveOutOfPoolLifespan(bool pooledActorsHaveOutOfPoolLifespan)
-	{ ActorsHaveOutOfPoolLifespan = pooledActorsHaveOutOfPoolLifespan; }
+	{ bActorsHaveOutOfPoolLifespan = pooledActorsHaveOutOfPoolLifespan; }
 
 // Sets whether actors should collide when active
 void UActorPool::SetPooledActorsShouldCollide(bool pooledActorsShouldCollide)
-	{ ActorsCollide = pooledActorsShouldCollide; }
+	{ bActorsCollide = pooledActorsShouldCollide; }
 
 // Sets whether actors should tick when active
 void UActorPool::SetPooledActorsShouldTick(bool pooledActorsShouldTick)
-	{ ActorsTick = pooledActorsShouldTick; }
+	{ bActorsTick = pooledActorsShouldTick; }
 
 // Sets the amount of actors this pool should spawn
 void UActorPool::SetSizeOfPool(int size)
@@ -145,16 +153,17 @@ void UActorPool::SetSizeOfPool(int size)
 	request for more actors (alternatively, such requests will
 	fail to produce a new actor) */
 void UActorPool::SetUseActiveActorsWhenEmpty(bool useActiveActorsWhenEmpty)
-	{ UseActiveActorsWhenEmpty = useActiveActorsWhenEmpty; } 
+	{ bUseActiveActorsWhenEmpty = useActiveActorsWhenEmpty; } 
 
-void UActorPool::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	// Variables to be replicated
-	DOREPLIFETIME(UActorPool, ActorOutOfPoolLifespan);
-	DOREPLIFETIME(UActorPool, ActorsHaveOutOfPoolLifespan);
-	DOREPLIFETIME(UActorPool, ActorsCollide);
-	DOREPLIFETIME(UActorPool, ActorsTick);
-	DOREPLIFETIME(UActorPool, Size);
-}
+//void UActorPool::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//
+//	// Variables to be replicated
+//	DOREPLIFETIME(UActorPool, ActiveActorIndexes)
+//	//DOREPLIFETIME(UActorPool, ActorOutOfPoolLifespan);
+//	//DOREPLIFETIME(UActorPool, bActorsHaveOutOfPoolLifespan);
+//	//DOREPLIFETIME(UActorPool, bActorsCollide);
+//	//DOREPLIFETIME(UActorPool, bActorsTick);
+//	//DOREPLIFETIME(UActorPool, Size);
+//}

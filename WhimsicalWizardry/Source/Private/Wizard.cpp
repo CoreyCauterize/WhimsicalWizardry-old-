@@ -60,18 +60,13 @@ AWizard::AWizard()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	// Create firing arrow for projectiles
-	FiringArrow = CreateDefaultSubobject<UArrowComponent>("Firing Arrow");
+	MagicMissileFiringArrow = CreateDefaultSubobject<UArrowComponent>("Firing Arrow");
+	MagicMissileFiringArrow->SetupAttachment(RootComponent); 
 
 	// Create magic missile firing 
 	MagicMissileFiring = CreateDefaultSubobject<UMagicMissileFiring>("Magic Missile Firing Component");
-	MagicMissileFiring->SetFireArrow(FiringArrow);
-	MagicMissilePool = CreateDefaultSubobject<UActorPool>("Magic Missile Pool");
-	MagicMissilePool->SetFireComponent(FiringArrow);
-	MagicMissilePool->SetSizeOfPool(MagicMissilePoolAmount);
+	MagicMissileFiring->SetFiringArrow(MagicMissileFiringArrow);
 }
-
-UArrowComponent* AWizard::GetMagicMissileFiringArrow()
-	{ return MagicMissileFiringArrow; }
 
 void AWizard::BeginPlay()
 {
@@ -109,11 +104,9 @@ void AWizard::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompon
 		//Firing item spells
 		EnhancedInputComponent->BindAction(FireItemSpellAction, ETriggerEvent::Triggered, this, &AWizard::FireItemSpell);
 
-		//Firing basic magic missile
+		//Firing magic missile
 		EnhancedInputComponent->BindAction(FireMagicMissileAction, ETriggerEvent::Triggered, this, &AWizard::FireMagicMissile);
-
 	}
-
 }
 
 void AWizard::Move(const FInputActionValue& Value)

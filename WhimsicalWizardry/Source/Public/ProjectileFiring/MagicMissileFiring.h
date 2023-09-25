@@ -5,7 +5,8 @@
 	projectiles that don't require getting a pickup.			*/
 
 /*	Changelog
-	2023-15-09 - Created
+	2023-09-15 - Created (DF)
+	2023-09-24 - Cleaned up (DF)
 	*/
 
 #pragma once
@@ -23,13 +24,6 @@ class WHIMSICALWIZARDRY_API UMagicMissileFiring : public UActorComponent
 public:
 	UMagicMissileFiring();
 
-	/* Called every frame
-	   DeltaTime        - Time since last update
-	   ELevelTick       - The type of tick
-	   ThisTickFunction - Pointer to this tick function */
-	/*virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-		FActorComponentTickFunction* ThisTickFunction) override;*/
-
 	// Gets the firing arrow the component fires from
 	// (usually attached to and set by the owner)
 	UFUNCTION(Category = "Firing")
@@ -41,47 +35,40 @@ public:
 		void SetFiringArrow(class UArrowComponent* firingArrow);
 
 	// Begins projectile fire sequence
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Gameplay")
+	// UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Gameplay")
 		void StartFire();
 
 	// Ends the fire action and allows a new fire action to be started
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Gameplay")
+	// UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Gameplay")
 		void StopFire();
 
 	// Sound played when weapon fires
 	UPROPERTY(EditAnywhere, Category = "Effects")
 		class USoundBase* FireSound = nullptr;
 
-	// The input component
-	UPROPERTY(EditAnywhere, Category = "Input")
-		class UEnhancedInputComponent* InputComponent = nullptr;
-	// The input for basic firing
-	UPROPERTY(EditAnywhere, Category = "Input")
-		class UInputAction* FireInput = nullptr;
+	// Actor class to be spawned by this pool
+	UPROPERTY(EditAnywhere, Category = "Actor Pool")
+		TSubclassOf<class APoolableActor> PoolableActorClass;
 
 protected:
 	// Called when game starts or when spawned
 	virtual void BeginPlay() override;
 
 	// Fires the projectile
-	UFUNCTION(Server, Reliable, Category = "Gameplay")
+	//UFUNCTION(Server, Reliable, Category = "Gameplay")
 		virtual void FireProjectile();
 
-	// Fires the projectile once it is acquired from the pool
-	UFUNCTION(Server, Reliable, Category = "Gameplay")
-		virtual void LateFireProjectile(APoolableActor* poolableActor);
-
 	// Whether the weapon is being fired
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Gameplay")
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
 		bool bIsBeingFired = false;
 
 	// Makes the weapon wait for a projectile if there is any lag
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Network")
+	UPROPERTY(BlueprintReadOnly, Category = "Network")
 		bool bWaitingForProjectileFromPool = false;
 
 	// Delay between shots in seconds, 
 	// tracked so it can be changed by other factors
-	UPROPERTY(Replicated, EditAnywhere, Category = "Gameplay")
+	UPROPERTY(EditAnywhere, Category = "Gameplay")
 		float FireRate;
 
 	// Timer handle for providing fire rate delay
@@ -93,7 +80,7 @@ protected:
 	class UActorPool* ProjectilePool;
 
 	// Arrow Component on actor, used to determine where to fire projectiles
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Gameplay")
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
 		UArrowComponent* FiringArrow = nullptr;
 		
 	// Firing constants
@@ -102,3 +89,12 @@ protected:
 	static const int MAGIC_MISSILE_AMOUNT = 10;
 	static const FString EMPTY_STRING;
 };
+
+//archive
+
+/* Called every frame
+   DeltaTime        - Time since last update
+   ELevelTick       - The type of tick
+   ThisTickFunction - Pointer to this tick function */
+   /*virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	   FActorComponentTickFunction* ThisTickFunction) override;*/

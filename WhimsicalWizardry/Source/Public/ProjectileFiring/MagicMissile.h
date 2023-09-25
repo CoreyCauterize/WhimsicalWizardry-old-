@@ -6,16 +6,17 @@
 	to be pooled using an ActorPool.									*/
 
 /*	Changelog
-	2023-15-09 - Created
-	2023-09-24 - Renamed from projectile to magic missile since it is the 
-				 only class using this functionality in the prototype
+	2023-09-15 - Created (DF)
+	2023-09-23 - Renamed from projectile to magic missile since it is the 
+				 only class using this functionality in the prototype (DF)
+	2023-09-24 - Cleaned up (DF)
 	*/
 
 #pragma once
 
 
 #include "CoreMinimal.h"
-//#include "../Pooling/PoolableActor.h"
+#include "../Pooling/PoolableActor.h"
 #include "MagicMissile.generated.h"
 
 UCLASS()

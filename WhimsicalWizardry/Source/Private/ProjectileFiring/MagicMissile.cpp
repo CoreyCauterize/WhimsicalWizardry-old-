@@ -38,7 +38,7 @@ AMagicMissile::AMagicMissile()
 	Mesh->SetupAttachment(RootComponent);
 
 	// Register projectile impact function on a hit event
-	CollisionCapsule->OnComponentHit.AddDynamic(this, &AProjectile::OnProjectileImpact);
+	CollisionCapsule->OnComponentHit.AddDynamic(this, &AMagicMissile::OnProjectileImpact);
 
 	// Set up projectile movement
 	Movement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
@@ -71,10 +71,11 @@ void AMagicMissile::Activate()
 	Movement->Activate(true); 
 	Movement->SetUpdatedComponent(GetRootComponent());
 
-	UMagicMissileFiring* firingComponent = 
-		Cast<UMagicMissileFiring>(GetSpawningActorPool()->GetOwner());
+	AWizard* wizard = Cast<AWizard>(GetSpawningActorPool()->GetOwner()); 
+	UArrowComponent* firingArrow = wizard->GetMagicMissileFiringArrow(); 
+	TeleportTo(firingArrow->GetComponentLocation(), firingArrow->GetComponentRotation());
+	Movement->SetVelocityInLocalSpace(firingArrow->GetForwardVector() * Movement->InitialSpeed);
 
-	Movement->SetVelocityInLocalSpace(firingComponent->GetFiringArrow()
 	//firingComponent->GetFiringArrow()->GetForwardVector() * Movement->InitialSpeed); 
 
 	/*Movement->Velocity = GetPool()->GetFireComponent()->GetForwardVector()

@@ -35,18 +35,8 @@ UMagicMissileFiring::UMagicMissileFiring() : FireRate(BASE_FIRE_RATE)
 void UMagicMissileFiring::BeginPlay()
 {
 	Super::BeginPlay();
+	ProjectilePool->SetPoolableActorClass(PoolableActorClass);
 }
-
-/* Called every frame.
-   DeltaTime        - Time since last update
-   ELevelTick       - The type of tick
-   ThisTickFunction - Pointer to this tick function	*/
-//void UMagicMissileFiring::TickComponent(float DeltaTime, ELevelTick TickType,
-//	FActorComponentTickFunction* ThisTickFunction)
-//{
-//	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-//}
-
 
 // Gets the firing arrow the component fires from
 // (usually attached to and set by the owner)
@@ -64,64 +54,60 @@ void UMagicMissileFiring::SetFiringArrow(UArrowComponent* firingArrow)
 }
 
 // Begins projectile fire sequence. 
-void UMagicMissileFiring::StartFire_Implementation()
+void UMagicMissileFiring::StartFire()
 {
 	if (bIsBeingFired == false)
 	{
-		bIsBeingFired = true;
-
+		bIsBeingFired = true; 
+		
 		// Set timer for fire delay
-		UWorld* world = GetWorld();
-		FTimerHandle& timerHandle = FiringTimer;
-		world->GetTimerManager().SetTimer(timerHandle, this,
-			&UMagicMissileFiring::StopFire, FireRate, false);
-
+		UWorld* world = GetWorld(); 
+		FTimerHandle& firingTimerHandle = FiringTimer; 
+		world->GetTimerManager().SetTimer(firingTimerHandle, this, 
+					&UMagicMissileFiring::StopFire, FireRate, false); 
+		
 		// Fire the projectile
-		FireProjectile();
+		FireProjectile(); 
 
-		// Play firing sound effect
-		UGameplayStatics::PlaySoundAtLocation(nullptr,
-			FireSound, GetOwner()->GetActorLocation(),
-			1.0f, 1.0f, 0.0f, nullptr, nullptr, nullptr);
+		UGameplayStatics::PlaySoundAtLocation(nullptr, FireSound, 
+								  GetOwner()->GetActorLocation(), 
+												1.0f, 1.0f, 0.0f, 
+									  nullptr, nullptr, nullptr); 
 
-		// This is where an animation can be called to play when we have one
+		// This is where animation can be called to play when we have one. 
 	}
 }
 
 // Ends the fire sequence and allows a new fire sequence to be started
-void UMagicMissileFiring::StopFire_Implementation()
-{
-	bIsBeingFired = false;
-}
+void UMagicMissileFiring::StopFire()
+	{ bIsBeingFired = false; }
 
 // Fires the projectile. 
-void UMagicMissileFiring::FireProjectile_Implementation()
+void UMagicMissileFiring::FireProjectile()
 {
-	bWaitingForProjectileFromPool = true;
-	ProjectilePool->ActivateAnActor();
+	AMagicMissile* magicMissile = Cast<AMagicMissile>(ProjectilePool->ActivateASpawnedActor()); 
+	check(magicMissile != nullptr); 
 }
 
-void UMagicMissileFiring::LateFireProjectile_Implementation(APoolableActor* poolableActor)
-{
-	AProjectile* projectile = Cast<AProjectile>(poolableActor);
-	check(projectile != nullptr);
-	if (projectile != nullptr)
-	{
-		FVector fireLocation = FireArrow->GetComponentLocation();
-		FRotator fireRotation = FireArrow->GetForwardVector().Rotation();
+//void UMagicMissileFiring::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//
+//	// Here we list the variables we want to replicate
+//	/*DOREPLIFETIME(UMagicMissileFiring, bIsBeingFired);
+//	DOREPLIFETIME(UMagicMissileFiring, FireRate);
+//	DOREPLIFETIME(UMagicMissileFiring, FiringArrow); 
+//	DOREPLIFETIME(UMagicMissileFiring, bWaitingForProjectileFromPool);*/
+//}
 
-		projectile->SetActorLocation(fireLocation, false, nullptr, ETeleportType::None);
-		projectile->SetActorRotation(fireRotation, ETeleportType::None);
-	}
-}
+// archive
 
-void UMagicMissileFiring::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	// Here we list the variables we want to replicate
-	DOREPLIFETIME(UMagicMissileFiring, bIsBeingFired);
-	DOREPLIFETIME(UMagicMissileFiring, FireArrow);
-	DOREPLIFETIME(UMagicMissileFiring, FireRate);
-	DOREPLIFETIME(UMagicMissileFiring, bWaitingForProjectileFromPool);
-}
+/* Called every frame.
+   DeltaTime        - Time since last update
+   ELevelTick       - The type of tick
+   ThisTickFunction - Pointer to this tick function	*/
+   //void UMagicMissileFiring::TickComponent(float DeltaTime, ELevelTick TickType,
+   //	FActorComponentTickFunction* ThisTickFunction)
+   //{
+   //	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+   //}

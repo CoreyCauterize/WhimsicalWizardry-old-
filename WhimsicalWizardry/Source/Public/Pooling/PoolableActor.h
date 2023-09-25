@@ -6,7 +6,8 @@
 	actor intended to be pooled this way.	*/
 
 /*	Changelog
-	2023-15-09 - Created
+	2023-09-15 - Created (DF)
+	2023-09-24 - Cleaned up (DF)
 	*/
 
 #pragma once
@@ -68,34 +69,30 @@ public:
 
 protected:
 	// Whether the pooled actor has a lifespan
-	UPROPERTY(Replicated)
-		bool HasOutOfPoolLifespan = false;
+	//UPROPERTY(Replicated)
+		bool bHasOutOfPoolLifespan = false;
 
 	// Whether the pooled actor is currently active
-	UPROPERTY(Replicated)
-		bool IsActive = false;
-
-	// The total lifespan of the pooled actor
-	float OutOfPoolLifespan = 0.0f;
-
-	// The timer before the pooled actor is returned to its pool if it has a lifespan timer
-	FTimerHandle OutOfPoolLifespanTimer;
+		bool bIsActive = false;
 
 	// Whether the pooled actor should enable collision upon activation
-	UPROPERTY(Replicated)
-		bool PooledActorShouldCollide = true;
-		
+		bool bPooledActorShouldCollide = true;
+
 	// Whether the pooled actor should enable ticking upon activation
-	UPROPERTY(Replicated)
-		bool PooledActorShouldTick = true; 
+		bool bPooledActorShouldTick = true;
+
+	// The total lifespan of the pooled actor
+		float OutOfPoolLifespan = 0.0f;
+
+	// The timer before the pooled actor is returned to its pool if it has a lifespan timer
+		FTimerHandle OutOfPoolLifespanTimer;
 	
 	/* Index for keeping track of actors in the pool. 
 	   Will be set automatically if spawned by the actor pool.
 	   If this is -1 at any point, this has been spawned 
 				erronously through some other method */
-	UPROPERTY(Replicated)
 		int PoolIndex = -1;
 
 	// The pool that the actor was spawned by
-	UActorPool* SpawningActorPool = nullptr;
+		UActorPool* SpawningActorPool = nullptr;
 };

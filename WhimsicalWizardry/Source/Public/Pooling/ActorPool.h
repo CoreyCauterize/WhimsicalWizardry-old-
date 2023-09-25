@@ -6,7 +6,8 @@
 	Can only pool actors that inherit from the PoolableActor class.	*/
 
 /*	Changelog
-	2023-15-09 - Created
+	2023-09-15 - Created (DF)
+	2023-09-24 - Cleaned up and fixed (DF)
 	*/
 
 #pragma once
@@ -31,10 +32,14 @@ public:
 
 	// Called by poolableActors on deactivation to alert the actorPool to 
 	// put them back in the pool in the right spot in the list
-	void DeactivateActiveActor(class APoolableActor* activeActor);
+	//UFUNCTION(Server, Reliable)
+		void DeactivateActiveActor(class APoolableActor* activeActor);
 
 	// Sets the out of pool lifespan of actors spawned by this pool
 	void SetActorOutOfPoolLifespan(float actorOutOfPoolLifespan);
+
+	// Sets the poolable actor class
+	void SetPoolableActorClass(TSubclassOf<class APoolableActor> poolableActorClass);
 
 	// Sets whether actors in this pool have a lifespan for which they 
 	// can exist out of the pool before deactivating	
@@ -65,38 +70,38 @@ protected:
 
 	// Time that actors spawned by this pool are allowed to exist 
 	// outside of the pool
-	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
+	UPROPERTY(EditAnywhere, Category = "Actor Pool")
 		float ActorOutOfPoolLifespan = 3.0f;
 
-	// Whether the actors in this pool have a set lifespan after being spawned
-	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
-		bool ActorsHaveOutOfPoolLifespan = true;
-
 	// Whether the actors in the pool should collide when out of the pool
-	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
-		bool ActorsCollide = true; 
-	
+	UPROPERTY(EditAnywhere, Category = "Actor Pool")
+		bool bActorsCollide = true;
+
+	// Whether the actors in this pool have a set lifespan after being spawned
+	UPROPERTY(EditAnywhere, Category = "Actor Pool")
+		bool bActorsHaveOutOfPoolLifespan = true;
+
 	// Whether the actors in the pool should tick when out of the pool
-	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
-		bool ActorsTick = true; 
+	UPROPERTY(EditAnywhere, Category = "Actor Pool")
+		bool bActorsTick = true;
+
+	/*	Whether the pool should deactivate actors spawned by it
+		when it has no already deactivated actors to activate
+		upon a request for more actors (alternatively, such
+		requests will fail to produce a new actor).
+		This is usually only disabled for ammo systems and
+		similar mechanics that require a specific pool size
+		to be maintained									*/
+		bool bUseActiveActorsWhenEmpty = true;
 		
 	// Amount of actors to be spawned by this pool
-	UPROPERTY(Replicated, EditAnywhere, Category = "Actor Pool")
+	UPROPERTY(EditAnywhere, Category = "Actor Pool")
 		int Size = 10;
 
 	// Array of actors in this pool
 	TArray<APoolableActor*> ActorPool;
 
 	// Indexes of actors in this pool's array that are currently active
-	TArray<int> ActiveActorIndexes;
-
-	/*	Whether the pool should deactivate actors spawned by it 
-		when it has no already deactivated actors to activate 
-		upon a request for more actors (alternatively, such 
-		requests will fail to produce a new actor). 
-		This is usually only disabled for ammo systems and 
-		similar mechanics that require a specific pool size 
-		to be maintained									*/
-	UPROPERTY(Replicated)
-		bool UseActiveActorsWhenEmpty = true; 
+	//UPROPERTY(Replicated)
+		TArray<int> ActiveActorIndexes;
 };

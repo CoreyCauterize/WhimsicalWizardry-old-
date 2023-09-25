@@ -19,17 +19,17 @@ APoolableActor::APoolableActor()
 	If actor has a specified lifespan, also begins that timer	*/
 void APoolableActor::Activate()
 {
-	IsActive = true; 
+	bIsActive = true; 
 
 	SetActorHiddenInGame(false); 
 
-	if (PooledActorShouldCollide == true)
+	if (bPooledActorShouldCollide == true)
 		SetActorEnableCollision(true);
 	
-	if (PooledActorShouldTick == true)
+	if (bPooledActorShouldTick == true)
 		SetActorTickEnabled(true); 
 	
-	if (HasOutOfPoolLifespan == true)
+	if (bHasOutOfPoolLifespan == true)
 		GetWorldTimerManager().SetTimer(OutOfPoolLifespanTimer, this, &APoolableActor::Deactivate, OutOfPoolLifespan, false); 
 }
 
@@ -38,7 +38,7 @@ void APoolableActor::Activate()
 	on the actor, including timers for its lifespan out of the pool. */
 void APoolableActor::Deactivate()
 {
-	IsActive = false; 
+	bIsActive = false; 
 
 	SetActorHiddenInGame(true); 
 
@@ -53,7 +53,7 @@ void APoolableActor::Deactivate()
 
 // Gets the state of the actor, i.e. whether it is active or in the pool
 bool APoolableActor::GetActiveState()
-	{ return IsActive; }
+	{ return bIsActive; }
 
 // Gets the index of the actor in the pool that it spawned from
 int APoolableActor::GetPoolIndex()
@@ -66,19 +66,19 @@ UActorPool* APoolableActor::GetSpawningActorPool()
 // Sets whether the actor has a limited duration of existence
 // outside of the pool
 void APoolableActor::SetHasOutOfPoolLifespan(bool hasOutOfPoolLifespan)
-	{ HasOutOfPoolLifespan = hasOutOfPoolLifespan; }
+	{ bHasOutOfPoolLifespan = hasOutOfPoolLifespan; }
 
 // Sets whether the actor should collide when active
 void APoolableActor::SetIfPooledActorShouldCollide(bool pooledActorShouldCollide)
-	{ PooledActorShouldCollide = pooledActorShouldCollide; }
+	{ bPooledActorShouldCollide = pooledActorShouldCollide; }
 
 // Sets whether the actor should tick when active
 void APoolableActor::SetIfPooledActorShouldTick(bool pooledActorShouldTick)
-	{ PooledActorShouldTick = pooledActorShouldTick; }
+	{ bPooledActorShouldTick = pooledActorShouldTick; }
 
 // Sets the active state of the actor (should be used only by the pool)
 void APoolableActor::SetActiveState(bool activeState)
-	{ IsActive = activeState; }
+	{ bIsActive = activeState; }
 
 // Sets the duration that the object exists outside of the pool 
 // if set to have a limited lifespan
@@ -95,15 +95,15 @@ void APoolableActor::SetSpawningActorPool(UActorPool* spawningActorPool)
 	{ SpawningActorPool = spawningActorPool; }
 
 
-void APoolableActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	// Variables to be replicated
-	DOREPLIFETIME(APoolableActor, HasLifespan);
-	DOREPLIFETIME(APoolableActor, IsActive);
-	DOREPLIFETIME(APoolableActor, Lifespan);
-	DOREPLIFETIME(APoolableActor, PooledActorShouldCollide);
-	DOREPLIFETIME(APoolableActor, PooledActorShouldTick);
-	DOREPLIFETIME(APoolableActor, PoolIndex);
-}
+//void APoolableActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//
+//	// Variables to be replicated
+//	/*DOREPLIFETIME(APoolableActor, bHasOutOfPoolLifespan);
+//	DOREPLIFETIME(APoolableActor, bIsActive);
+//	DOREPLIFETIME(APoolableActor, OutOfPoolLifespan);
+//	DOREPLIFETIME(APoolableActor, bPooledActorShouldCollide);
+//	DOREPLIFETIME(APoolableActor, bPooledActorShouldTick);
+//	DOREPLIFETIME(APoolableActor, PoolIndex);*/
+//}
