@@ -132,17 +132,23 @@ void AWizard::PossessedBy(AController* NewController)
 
 void AWizard::SpawnCamera()
 {
-	FVector SpawnLocation = GetActorLocation() + (FVector(0, 0, 300) - (350 * GetActorForwardVector()));
-	FRotator SpawnRotation = GetActorForwardVector().Rotation();
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = this;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Name = FName("DynamicCamera_" + GetName());
 
-	ADynamicCamera* cam = GetController()->GetWorld()->SpawnActor<ADynamicCamera>(ADynamicCamera::StaticClass(), FVector(-940.0, 0, 810), FRotator(-20, 0, 0), SpawnParams);
+	FVector SpawnLocation = GetActorLocation();
+	FRotator SpawnRotation = GetActorForwardVector().Rotation();
+
+	ADynamicCamera* cam = GetController()->GetWorld()->SpawnActor<ADynamicCamera>(ADynamicCamera::StaticClass(), SpawnLocation,SpawnRotation, SpawnParams);
 
 	CameraActor = cam;
+	FVector camDir = GetActorLocation() - cam->GetCameraComponent()->GetComponentLocation();
+	camDir.Normalize();
+	cam->GetCameraComponent()->SetWorldRotation(camDir.Rotation());
+
 }
 
 
