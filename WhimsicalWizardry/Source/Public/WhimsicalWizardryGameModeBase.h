@@ -14,4 +14,5 @@ class WHIMSICALWIZARDRY_API AWhimsicalWizardryGameModeBase : public AGameModeBas
 {
 	GENERATED_BODY()
 	
+
 };

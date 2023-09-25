@@ -22,6 +22,8 @@ void UActorPool::BeginPlay()
 		check(world != nullptr); 
 		for (int i = 0; i < Size; i++)
 		{
+			//FActorSpawnParameters spawnParameters; 
+
 			// Spawns an actor
 			APoolableActor* poolableActor = world->SpawnActor<APoolableActor>(
 													PoolableActorClass, 

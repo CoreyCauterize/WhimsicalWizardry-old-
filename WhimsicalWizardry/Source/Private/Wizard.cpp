@@ -69,6 +69,7 @@ AWizard::AWizard()
 	// Create magic missile firing 
 	MagicMissileFiring = CreateDefaultSubobject<UMagicMissileFiring>("Magic Missile Firing Component");
 	MagicMissileFiring->SetFiringArrow(MagicMissileFiringArrow);
+
 }
 
 void AWizard::BeginPlay()

@@ -20,12 +20,14 @@ const float AMagicMissile::BASE_CAPSULE_SIZE_Y = 30.0f;
 const float AMagicMissile::BASE_GRAVITY = 1.0f;
 const float AMagicMissile::BASE_INITIAL_SPEED = 2500.0f;
 const float AMagicMissile::BASE_MAX_SPEED = 4000.0f;
+const float AMagicMissile::COLLISION_DELAY = 1.0f;
+const float AMagicMissile::FIRING_OFFSET = 45.0f;
 
 // Initializes projectile
 AMagicMissile::AMagicMissile()
 {
 	// Projectiles call Tick() every frame
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	// Set up collision capsule
 	CollisionCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RootComponent"));
@@ -56,27 +58,54 @@ void AMagicMissile::BeginPlay()
 	Super::BeginPlay();
 }
 
+// Delays the collision being enabled to prevent colliding with the owner
+void AMagicMissile::DelayCollision()
+{
+	SetActorEnableCollision(false);
+	GetWorldTimerManager().SetTimer(CollisionDelayTimer, this, &AMagicMissile::ReEnableCollision, COLLISION_DELAY, false); 
+}
+
+// Re-enables collision upon the delay timer's completion
+void AMagicMissile::ReEnableCollision()
+{
+	SetActorEnableCollision(true); 
+}
+
 // Called every frame
 void AMagicMissile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorForwardVector() * 100.0f, FColor::Red, false, 5.0f, 1, 100.0f); 
 }
 
 // Take projectile out of the pool
 void AMagicMissile::Activate_Implementation()
 {
-	Super::Activate_Implementation();
-
 	// Cause the projectile to start moving again
 	Movement->Activate(true); 
 	Movement->SetUpdatedComponent(GetRootComponent());
 
 	AWizard* wizard = Cast<AWizard>(GetSpawningActorPool()->GetOwner()); 
-	UArrowComponent* firingArrow = wizard->GetMagicMissileFiringArrow(); 
-	TeleportTo(firingArrow->GetComponentLocation(), firingArrow->GetComponentRotation());
-	Movement->SetVelocityInLocalSpace(firingArrow->GetForwardVector() * Movement->InitialSpeed);
 
-	//firingComponent->GetFiringArrow()->GetForwardVector() * Movement->InitialSpeed); 
+	UArrowComponent* firingArrow = wizard->GetMagicMissileFiringArrow(); 
+	
+	TeleportTo(firingArrow->GetComponentLocation() + firingArrow->GetForwardVector() * FIRING_OFFSET, FRotator().ZeroRotator);\
+	
+	SetActorRotation(wizard->GetActorRotation()); 
+
+	//SetActorRotation(firingArrow->GetForwardVector().Rotation());
+
+	FVector fVelocity = GetActorForwardVector()* Movement->InitialSpeed; 
+	Movement->Velocity.Set(fVelocity.X, fVelocity.Y, fVelocity.Z); 
+
+	//Movement->SetVelocityInLocalSpace(GetActorForwardVector() * Movement->InitialSpeed); 
+		
+	// Call super AFTER to enable collision without colliding with things at orgigin (should change that later to move to origin in deactivate)
+	Super::Activate_Implementation();
+
+	//DelayCollision(); 
+
 
 	/*Movement->Velocity = GetPool()->GetFireComponent()->GetForwardVector()
 												* Movement->InitialSpeed;*/

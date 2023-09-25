@@ -13,7 +13,19 @@ UCLASS()
 class WHIMSICALWIZARDRY_API AWimsicalWizardryPlayerState : public APlayerState
 {
 	GENERATED_BODY()
-	
+
 public:
-	int m_playerScore;
+
+	int getLives();
+	int getPlayerScore();
+
+	void setLives(int lives);
+	void setPlayerScore(int playerScore);
+
+	void increasePlayerScore();
+	void takePlayerLife();
+
+private:
+	int m_lives = 3;
+	int m_playerScore = 0;
 };
