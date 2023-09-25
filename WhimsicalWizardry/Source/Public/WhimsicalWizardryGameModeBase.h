@@ -24,5 +24,13 @@ public:
 
 		virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 
+		UFUNCTION(NetMultiCast, Reliable)
+            void NMC_SpawnPlayerCamera(APlayerController* NewPlayer);
+
+private:	
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player Camera", meta = (AllowPrivateAccess ="true"))
+	TSubclassOf<class ADynamicCamera> DynamicCameraClass;
+
 
 };

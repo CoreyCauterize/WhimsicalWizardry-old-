@@ -18,15 +18,17 @@ ADynamicCamera::ADynamicCamera()
 	CameraBoom->TargetArmLength = 400.0f;
 	CameraBoom->bUsePawnControlRotation = true;
 
-	DynamicCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("DynamicCamera"));
-	DynamicCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	DynamicCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	DynamicCamera = GetCameraComponent();
+	//DynamicCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("DynamicCamera"));
+	//DynamicCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	//DynamicCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	GetCameraComponent()->AttachToComponent(DynamicCamera, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 void ADynamicCamera::BeginPlay()
 {
+	Super::BeginPlay();
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
 		APlayerController* PC = Cast<APlayerController>(&Iterator);
@@ -34,7 +36,7 @@ void ADynamicCamera::BeginPlay()
 		FVector Loc = DynamicCamera->GetRelativeLocation();
 		FActorSpawnParameters SpawnInfo;
 
-		GetWorld()->SpawnActor<ADynamicCamera>(Loc, FRotator(0, 0 ,0), SpawnInfo);
+		//GetWorld()->SpawnActor<ADynamicCamera>(Loc, FRotator(0, 0 ,0), SpawnInfo);
 	}
 }
 
