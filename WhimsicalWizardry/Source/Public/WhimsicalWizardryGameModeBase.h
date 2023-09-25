@@ -14,5 +14,15 @@ class WHIMSICALWIZARDRY_API AWhimsicalWizardryGameModeBase : public AGameModeBas
 {
 	GENERATED_BODY()
 	
+public:
+        AWhimsicalWizardryGameModeBase();
+
+		virtual void PostLogin(APlayerController* NewPlayer) override;
+
+		virtual void Logout(AController* Exiting) override;
+
+
+		virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+
 
 };
