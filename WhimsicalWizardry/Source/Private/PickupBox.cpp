@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PickupBox.h"
+#include "PickupSpawner.h"
 #include "SpellInventoryComponent.h"
 
 // Sets default values
@@ -15,10 +16,11 @@ APickupBox::APickupBox()
 	pickupMesh->SetupAttachment(pickupHitbox);
 
 	pickupHitbox->SetSimulatePhysics(false);
+	if(GetLocalRole() == ROLE_Authority)
 	pickupHitbox->OnComponentBeginOverlap.AddDynamic(this, &APickupBox::OnOverlapBegin);
 
 
-	SetReplicates(true);
+	bReplicates = true;
 
 }
 
@@ -37,12 +39,26 @@ void APickupBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor
 		return;
 	}
 	USpellInventoryComponent* tempInv;
-	// Put Riley's method here when it is done, but for now I will disappear!
+	// Calls the spell inventory component on the wizardx
 	tempInv = Cast <USpellInventoryComponent>(wizard->GetComponentByClass(USpellInventoryComponent::StaticClass()));
 	tempInv->TryAddSpell();
-	SetActorHiddenInGame(true);
+	ownerSpawner->Server_DelaySpawn();
+	FTimerHandle timer;
+	GetWorld()->GetTimerManager().SetTimer(timer, this, &APickupBox::Obliterate, 0.1f, false);
 	
 }
+
+void APickupBox::Obliterate()
+{
+	Destroy();
+}
+
+void APickupBox::SetOwnerSpawner(UPickupSpawner* newSpawner)
+{
+	ownerSpawner = newSpawner;
+}
+
+
 
 // Called every frame
 void APickupBox::Tick(float DeltaTime)
@@ -51,7 +67,8 @@ void APickupBox::Tick(float DeltaTime)
 	
 }
 
-void APickupBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void APickupBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APickupBox, ownerSpawner);
 }

@@ -23,12 +23,14 @@ public:
 	// Sets default values for this actor's properties
 	APickupBox();
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UStaticMeshComponent* pickupMesh;
-	//Set These to replicated when implementing networking, they don't like not having the other function and I don't want to do it
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
-	UCapsuleComponent* pickupHitbox;
 	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UCapsuleComponent* pickupHitbox;
+
+	UPROPERTY(Replicated)
+	class UPickupSpawner* ownerSpawner;
 	
 
 protected:
@@ -37,9 +39,13 @@ protected:
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
 
-public:	
+	void Obliterate();
+
+	
+public:
+	UFUNCTION()
+	void SetOwnerSpawner(UPickupSpawner* newSpawner);
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

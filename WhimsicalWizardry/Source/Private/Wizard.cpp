@@ -1,19 +1,21 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+//	Copyright 2023 Silver Standard Studios (based on base class by Epic Games, Inc.) All rights reserved.
 
-#include "Wizard.h"
-#include "Camera/CameraComponent.h"
+#include "Wizard.h"						// internal inclusions
+#include "ItemSpell.h"
+#include "PlayerKnockedOffComponent.h"
+#include "Pooling/ActorPool.h"
+#include "Pooling/PoolableActor.h"
+#include "MagicProjectile/MagicMissileFiring.h"
+#include "SpellInventoryComponent.h"
+#include "Camera/CameraComponent.h"		// unreal inclusions
+#include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "PlayerKnockedOffComponent.h"
-#include "SpellInventoryComponent.h"
-#include "ItemSpell.h"
-#include "Public/WhimsicalWizardryGameModeBase.h"
-#include "Public/WimsicalWizardryGameStateBase.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AWizard
@@ -59,6 +61,14 @@ AWizard::AWizard()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	
+	// Create firing arrow for projectiles
+	MagicMissileFiringArrow = CreateDefaultSubobject<UArrowComponent>("Firing Arrow"); 
+	MagicMissileFiringArrow->SetupAttachment(RootComponent);
+
+	// Create magic missile firing 
+	MagicMissileFiring = CreateDefaultSubobject<UMagicMissileFiring>("Magic Missile Firing Component");
+	MagicMissileFiring->SetFiringArrow(MagicMissileFiringArrow);
 }
 
 void AWizard::BeginPlay()
@@ -97,8 +107,9 @@ void AWizard::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompon
 		//Firing item spells
 		EnhancedInputComponent->BindAction(FireItemSpellAction, ETriggerEvent::Triggered, this, &AWizard::FireItemSpell);
 
+		//Firing magic missile
+		EnhancedInputComponent->BindAction(FireMagicMissileAction, ETriggerEvent::Triggered, this, &AWizard::FireMagicMissile);
 	}
-
 }
 
 void AWizard::Move(const FInputActionValue& Value)
@@ -150,3 +161,7 @@ void AWizard::FireItemSpell()
 	}
 }
 
+void AWizard::FireMagicMissile_Implementation()
+{
+	MagicMissileFiring->StartFire();
+}
