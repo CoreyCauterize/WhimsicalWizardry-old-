@@ -61,6 +61,7 @@ void UKillPlaneComponent::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherA
 		if (wWGameState->lastPlayerStanding())
 		{
 			wWGameState->score();
+			wWGameState->resetGame();
 		}
 
 		UPlayerKnockedOffComponent* knockedOffComp = OtherActor->GetComponentByClass<UPlayerKnockedOffComponent>();
