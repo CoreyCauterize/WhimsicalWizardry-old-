@@ -57,6 +57,15 @@ protected:
 	// called when game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Timer for delaying collision and preventing collisions with owner
+	FTimerHandle CollisionDelayTimer;
+
+	// Delays the collision being enabled to prevent colliding with the owner
+	void DelayCollision(); 
+
+	// Re-enables collision upon the delay timer's completion
+	void ReEnableCollision(); 
+
 	// Called on projectile impact
 	// Hitcomponent - Component of this actor hit | OtherActor - Actor hit
 	// OtherComp    - Component of other actor    | NormalImpulse - normal vector of collision
@@ -72,5 +81,6 @@ protected:
 	static const float BASE_GRAVITY;
 	static const float BASE_INITIAL_SPEED;
 	static const float BASE_MAX_SPEED;
-
+	static const float COLLISION_DELAY;
+	static const float FIRING_OFFSET; 
 };
