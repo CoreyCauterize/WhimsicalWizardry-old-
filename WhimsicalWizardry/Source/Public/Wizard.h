@@ -45,6 +45,7 @@ protected:
 	void FireItemSpell(); 
 
 	// Called for firing basic magic missile
+	UFUNCTION(Server, Reliable)
 	void FireMagicMissile();
 
 	// Called for looking input

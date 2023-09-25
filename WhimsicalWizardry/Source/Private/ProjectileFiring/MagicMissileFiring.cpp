@@ -28,7 +28,7 @@ UMagicMissileFiring::UMagicMissileFiring() : FireRate(BASE_FIRE_RATE)
 	ProjectilePool->SetPooledActorsShouldTick(false);
 	ProjectilePool->SetSizeOfPool(MAGIC_MISSILE_AMOUNT);
 
-	SetIsReplicatedByDefault(true);
+	//SetIsReplicatedByDefault(true);
 }
 
 // Called when game starts or when spawned

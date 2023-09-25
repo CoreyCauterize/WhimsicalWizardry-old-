@@ -17,7 +17,7 @@ APoolableActor::APoolableActor()
 /*	Activates this actor, causing it to be visible in world and
 	enabling collision and ticking every frame if set to do so.
 	If actor has a specified lifespan, also begins that timer	*/
-void APoolableActor::Activate()
+void APoolableActor::Activate_Implementation()
 {
 	bIsActive = true; 
 
@@ -36,7 +36,7 @@ void APoolableActor::Activate()
 /*	Deactivates this actor, stopping it from being visible in world
 	and disabling collision and ticking every frame. Stops all timers
 	on the actor, including timers for its lifespan out of the pool. */
-void APoolableActor::Deactivate()
+void APoolableActor::Deactivate_Implementation()
 {
 	bIsActive = false; 
 

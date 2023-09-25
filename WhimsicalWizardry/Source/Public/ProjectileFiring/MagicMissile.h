@@ -31,10 +31,7 @@ public:
 	virtual void Tick(float Deltatime) override;
 
 	// Takes projectile out of pool
-	virtual void Activate() override;
-
-	// Puts projectile back into pool
-	virtual void Deactivate() override;
+	virtual void Activate_Implementation() override;
 
 	// Collision capsule
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")

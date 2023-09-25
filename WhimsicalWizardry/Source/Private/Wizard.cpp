@@ -158,7 +158,7 @@ void AWizard::FireItemSpell()
 	}
 }
 
-void AWizard::FireMagicMissile()
+void AWizard::FireMagicMissile_Implementation()
 {
 	MagicMissileFiring->StartFire();
 }

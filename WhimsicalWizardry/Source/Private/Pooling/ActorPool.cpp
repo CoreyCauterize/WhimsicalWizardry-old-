@@ -117,8 +117,6 @@ APoolableActor* UActorPool::ActivateASpawnedActor()
 // remove them from the active actors index list
 void UActorPool::DeactivateActiveActor(APoolableActor* activeActor)
 { 
-	//
-
 	// Remove the actor's unique index from the array of active actors 
 	ActiveActorIndexes.Remove(activeActor->GetPoolIndex());
 }

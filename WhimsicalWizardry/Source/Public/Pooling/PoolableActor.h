@@ -27,12 +27,14 @@ public:
 	/*	Activates this actor, causing it to be visible in world and
 		enabling collision and ticking every frame if set to do so.
 		If actor has a specified lifespan, also begins that timer	*/
-	virtual void Activate();
+	UFUNCTION(Server, Reliable)
+		virtual void Activate();
 
 	/*	Deactivates this actor, stopping it from being visible in world
 		and disabling collision and ticking every frame. Stops all timers 
 		on the actor, including timers for its lifespan out of the pool. */
-	virtual void Deactivate();
+	UFUNCTION(Server, Reliable)
+		virtual void Deactivate();
 
 	// Gets the state of the actor, i.e. whether it is active or in the pool
 	bool GetActiveState();
@@ -67,6 +69,13 @@ public:
 	// to be referenced later
 	void SetSpawningActorPool(UActorPool* spawningActorPool);
 
+	/* Index for keeping track of actors in the pool.
+	   Will be set automatically if spawned by the actor pool.
+	   If this is -1 at any point, this has been spawned
+				erronously through some other method */
+	UPROPERTY(VisibleAnywhere)
+		int PoolIndex = -1;
+
 protected:
 	// Whether the pooled actor has a lifespan
 	//UPROPERTY(Replicated)
@@ -86,12 +95,6 @@ protected:
 
 	// The timer before the pooled actor is returned to its pool if it has a lifespan timer
 		FTimerHandle OutOfPoolLifespanTimer;
-	
-	/* Index for keeping track of actors in the pool. 
-	   Will be set automatically if spawned by the actor pool.
-	   If this is -1 at any point, this has been spawned 
-				erronously through some other method */
-		int PoolIndex = -1;
 
 	// The pool that the actor was spawned by
 		UActorPool* SpawningActorPool = nullptr;

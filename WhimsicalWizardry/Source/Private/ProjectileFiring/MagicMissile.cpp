@@ -63,9 +63,9 @@ void AMagicMissile::Tick(float DeltaTime)
 }
 
 // Take projectile out of the pool
-void AMagicMissile::Activate()
+void AMagicMissile::Activate_Implementation()
 {
-	APoolableActor::Activate();
+	Super::Activate_Implementation();
 
 	// Cause the projectile to start moving again
 	Movement->Activate(true); 
@@ -81,12 +81,6 @@ void AMagicMissile::Activate()
 	/*Movement->Velocity = GetPool()->GetFireComponent()->GetForwardVector()
 												* Movement->InitialSpeed;*/
 												//Movement->SetVelocityInLocalSpace(GetPool()->GetFireComponent()->GetForwardVector() * Movement->InitialSpeed); 
-}
-
-// Put projectile back into the pool
-void AMagicMissile::Deactivate()
-{
-	APoolableActor::Deactivate();
 }
 
 /* Called on projectile impact
