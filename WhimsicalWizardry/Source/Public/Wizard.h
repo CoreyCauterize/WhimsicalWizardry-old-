@@ -67,6 +67,18 @@ private:
 	// Called for firing item spell input
 	void FireItemSpell();
 
+	/* -- Ragdoll ------------------------------------------------------------------------- */
+
+	// Function to actively turn player into a ragdoll
+	UFUNCTION()
+	void Ragdoll(); 
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Ragdoll_NMC();
+
+	UFUNCTION(Server, Reliable)
+	void Ragdoll_Server(); 
+
 private:
 
 	/* -- Base Follow Camera --------------------------------------------------------------- */
@@ -123,4 +135,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Custom, meta = (AllowPrivateAccess = "true"))
 		class USpellInventoryComponent* SpellInventoryComponent;
 
+	/* -- Ragdoll ----------------------------------------------------------------------------- */
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* TestForceRagdoll;
+	
+	bool bIsRagdoll = false; 
 };

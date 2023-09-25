@@ -69,7 +69,6 @@ AWizard::AWizard()
 	// Create magic missile firing 
 	MagicMissileFiring = CreateDefaultSubobject<UMagicMissileFiring>("Magic Missile Firing Component");
 	MagicMissileFiring->SetFiringArrow(MagicMissileFiringArrow);
-
 }
 
 void AWizard::BeginPlay()
@@ -95,21 +94,24 @@ void AWizard::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompon
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 
-		//Jumping
+		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-		//Moving
+		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AWizard::Move);
 
-		//Looking
+		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AWizard::Look);
 
-		//Firing item spells
+		// Firing item spells
 		EnhancedInputComponent->BindAction(FireItemSpellAction, ETriggerEvent::Triggered, this, &AWizard::FireItemSpell);
 
-		//Firing magic missile
+		// Firing magic missile
 		EnhancedInputComponent->BindAction(FireMagicMissileAction, ETriggerEvent::Triggered, this, &AWizard::FireMagicMissile);
+
+		// Forced ragdoll
+		EnhancedInputComponent->BindAction(TestForceRagdoll, ETriggerEvent::Triggered, this, &AWizard::Ragdoll); 
 	}
 }
 
@@ -149,6 +151,7 @@ void AWizard::Look(const FInputActionValue& Value)
 	}
 }
 
+// Called for firing item spell input
 void AWizard::FireItemSpell()
 {
 	if (SpellInventoryComponent)
@@ -162,7 +165,97 @@ void AWizard::FireItemSpell()
 	}
 }
 
+// Called for firing basic magic missile
 void AWizard::FireMagicMissile_Implementation()
 {
 	MagicMissileFiring->StartFire();
 }
+
+// Function to actively turn player into a ragdoll
+void AWizard::Ragdoll()
+{
+	Ragdoll_Server(); 
+	Ragdoll_NMC(); 
+}
+
+// Function to actively turn player into a ragdoll
+void AWizard::Ragdoll_Server_Implementation()
+{
+	// Disable all collision on capsule
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
+
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll")); 
+	SetActorEnableCollision(true); 
+
+	if (bIsRagdoll == false)
+	{
+		// Turn into ragdoll
+		GetMesh()->SetAllBodiesSimulatePhysics(true); 
+		GetMesh()->SetSimulatePhysics(true); 
+		GetMesh()->WakeAllRigidBodies(); 
+		GetMesh()->bBlendPhysics = true; 
+
+		UCharacterMovementComponent* CharacterComp = Cast<UCharacterMovementComponent>(GetMovementComponent()); 
+		if (CharacterComp != nullptr)
+		{
+			CharacterComp->StopMovementImmediately(); 
+			CharacterComp->DisableMovement(); 
+			CharacterComp->SetComponentTickEnabled(false); 
+		}
+		// Possibly not needed (may destroy this)
+		//SetLifeSpan(10.0f); 
+
+		bIsRagdoll = true; 
+	}
+}
+
+// Function to actively turn player into a ragdoll
+void AWizard::Ragdoll_NMC_Implementation()
+{
+	// Disable all collision on capsule
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
+
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	SetActorEnableCollision(true);
+
+	if (bIsRagdoll == false)
+	{
+		// Turn into ragdoll
+		GetMesh()->SetAllBodiesSimulatePhysics(true);
+		GetMesh()->SetSimulatePhysics(true);
+		GetMesh()->WakeAllRigidBodies();
+		GetMesh()->bBlendPhysics = true;
+
+		UCharacterMovementComponent* CharacterComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
+		if (CharacterComp != nullptr)
+		{
+			CharacterComp->StopMovementImmediately();
+			CharacterComp->DisableMovement();
+			CharacterComp->SetComponentTickEnabled(false);
+		}
+		// Possibly not needed (may destroy this)
+		//SetLifeSpan(10.0f); 
+
+		bIsRagdoll = true;
+	}
+}
+
+	/* Apply physics impulse on the bone of the enemy skeleton mesh we hit (ray-trace damage only) */
+	/*if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+	{
+		FPointDamageEvent PointDmg = *((FPointDamageEvent*)(&DamageEvent));
+		{
+			GetMesh()->AddImpulseAtLocation(PointDmg.ShotDirection * 5000, PointDmg.HitInfo.ImpactPoint, PointDmg.HitInfo.BoneName);
+		}
+	}
+	if (DamageEvent.IsOfType(FRadialDamageEvent::ClassID))
+	{
+		FRadialDamageEvent RadialDmg = *((FRadialDamageEvent const*)(&DamageEvent));
+		{
+			GetMesh()->AddRadialImpulse(RadialDmg.Origin, RadialDmg.Params.GetMaxRadius(), 100000, ERadialImpulseFalloff::RIF_Linear);
+		}
+	}*/
+
+	//return true;
