@@ -3,6 +3,7 @@
 
 #include "WimsicalWizardryGameStateBase.h"
 #include "WimsicalWizardryPlayerState.h"
+#include "Net/UnrealNetwork.h"
 
 bool AWimsicalWizardryGameStateBase::lastPlayerStanding()
 {
@@ -13,7 +14,7 @@ bool AWimsicalWizardryGameStateBase::lastPlayerStanding()
 	for (int i = 0; i < PlayerArray.Num(); i++)
 	{
 		wWPlayerState = Cast<AWimsicalWizardryPlayerState>(PlayerArray[i]);
-		if (wWPlayerState->getLives())
+		if (wWPlayerState->getLives() > 0)
 		{
 			numPlayersAlive++;
 		}
@@ -29,13 +30,25 @@ bool AWimsicalWizardryGameStateBase::lastPlayerStanding()
 
 void AWimsicalWizardryGameStateBase::score()
 {
-	if (m_player0Score == 0)
+	AWimsicalWizardryPlayerState* wWPlayerState;
+	wWPlayerState = Cast<AWimsicalWizardryPlayerState>(PlayerArray[0]);
+	if (wWPlayerState->getLives() != 0)
+	{
+		m_player0Score++;
+	}
+	else
 	{
 		m_player1Score++;
 	}
-	else if (m_player1Score == 0)
+}
+
+void AWimsicalWizardryGameStateBase::resetGame()
+{
+	AWimsicalWizardryPlayerState* wWPlayerState;
+	for (int i = 0; i < PlayerArray.Num(); i++)
 	{
-		m_player0Score++;
+		wWPlayerState = Cast<AWimsicalWizardryPlayerState>(PlayerArray[i]);
+		wWPlayerState->setLives(3);
 	}
 }
 
@@ -47,4 +60,12 @@ int AWimsicalWizardryGameStateBase::GetPlayer0Score()
 int AWimsicalWizardryGameStateBase::GetPlayer1Score()
 {
 	return m_player1Score;
+}
+
+void AWimsicalWizardryGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AWimsicalWizardryGameStateBase, m_player0Score);
+	DOREPLIFETIME(AWimsicalWizardryGameStateBase, m_player1Score);
 }

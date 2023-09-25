@@ -21,6 +21,8 @@ public:
 
 	void score();
 
+	void resetGame();
+
 	UFUNCTION(BlueprintCallable, Category = "Score")
 		int GetPlayer0Score();
 
@@ -28,6 +30,8 @@ public:
 		int GetPlayer1Score();
 
 private:
-	int m_player0Score;
-	int m_player1Score;
+	UPROPERTY(Replicated)
+		int m_player0Score;
+	UPROPERTY(Replicated)
+		int m_player1Score;
 };
