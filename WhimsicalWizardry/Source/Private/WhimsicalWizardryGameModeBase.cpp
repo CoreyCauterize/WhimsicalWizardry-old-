@@ -34,7 +34,7 @@ void AWhimsicalWizardryGameModeBase::HandleStartingNewPlayer_Implementation(APla
     Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 	APawn* NewPawn = NewPlayer->GetPawn();
 
-	NMC_SpawnPlayerCamera(NewPlayer);
+	//NMC_SpawnPlayerCamera(NewPlayer);
 
 }
 
@@ -57,7 +57,7 @@ void AWhimsicalWizardryGameModeBase::NMC_SpawnPlayerCamera_Implementation(APlaye
     ADynamicCamera* DynamicCamera = GetWorld()->SpawnActor<ADynamicCamera>(DynamicCameraClass, pos + cameraOffset ,rot);
 	if (DynamicCamera)
 	{
-		FRotator direction = (pos - DynamicCamera->GetDynamicCamera()->GetComponentLocation()).Rotation();
+		FRotator direction = (pos - DynamicCamera->GetCameraComponent()->GetComponentLocation()).Rotation();
 		//DynamicCamera->SetActorRotation(rot);
 		DynamicCamera->SetOwner(NewPlayer);
 		DynamicCamera->GetCameraComponent()->SetWorldRotation(direction);

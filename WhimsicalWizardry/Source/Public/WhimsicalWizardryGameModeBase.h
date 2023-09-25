@@ -27,6 +27,8 @@ public:
 		UFUNCTION(NetMultiCast, Reliable)
             void NMC_SpawnPlayerCamera(APlayerController* NewPlayer);
 
+		FORCEINLINE TSubclassOf<class ADynamicCamera> GetDynamicCameraClass() const { return DynamicCameraClass; }
+
 private:	
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player Camera", meta = (AllowPrivateAccess ="true"))
