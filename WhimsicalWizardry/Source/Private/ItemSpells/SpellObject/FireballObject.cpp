@@ -7,6 +7,9 @@
 #include "Wizard.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "ItemSpells/SpellObject/FireballExplosionObject.h"
+
 
 
 
@@ -45,6 +48,10 @@ AFireballObject::AFireballObject()
 	
 	FQuat rot(0, 180, 0, 0);
 	fireballCollision->SetRelativeRotation(rot);
+
+	fireballMovement = CreateDefaultSubobject<UProjectileMovementComponent>("Fireball Movement");
+	fireballMovement->SetUpdatedComponent(RootComponent);
+	fireballMovement->ProjectileGravityScale = 1.5f;
 }
 
 void AFireballObject::Tick(float DeltaTime)
@@ -90,6 +97,11 @@ void AFireballObject::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, A
 	}
 
 	Destroy();
+}
+
+void AFireballObject::SetVelocity(FVector inVelocity)
+{
+	fireballMovement->Velocity = inVelocity;
 }
 
 void  AFireballObject::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const

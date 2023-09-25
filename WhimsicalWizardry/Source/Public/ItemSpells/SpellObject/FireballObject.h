@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* fireballCollision;
 
+	UPROPERTY(EditAnywhere)
+	class UProjectileMovementComponent* fireballMovement;
+
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -41,7 +44,7 @@ protected:
 
 public:
 
-	void SetVelocity(FVector inVelocity) { velocity = inVelocity; }
+	void SetVelocity(FVector inVelocity);
 
 
 };

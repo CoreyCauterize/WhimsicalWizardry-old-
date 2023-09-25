@@ -84,6 +84,8 @@ void AWizard::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	//Cast<APlayerController>(GetController())->ConsoleCommand("show collision", false);
 }
 
 //////////////////////////////////////////////////////////////////////////

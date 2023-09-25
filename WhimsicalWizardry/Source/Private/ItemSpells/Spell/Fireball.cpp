@@ -24,9 +24,10 @@ void AFireball::Server_OnFire_Implementation(USpellInventoryComponent* belonging
 
 	if (castingCharacter)
 	{
-		spawnVelocity = castingCharacter->GetActorForwardVector() * 3; //Todo: Make the hardcoded 3 a const member variable in Fireball
+		spawnVelocity = castingCharacter->GetActorRotation().Vector() * 600; //Todo: Make the hardcoded 600 a const member variable in Fireball
 		spawnLocation = initialLocation + (spawnVelocity.GetSafeNormal() * 60); //Todo: Make the hardcoded 60 a member variable in ItemSpell
 		spawnRotation = castingCharacter->GetActorRotation();
+		spawnVelocity.Z = 900;
 
 		FActorSpawnParameters spawnParams;
 
