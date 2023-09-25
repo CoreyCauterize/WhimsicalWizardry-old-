@@ -15,6 +15,7 @@
 #include "WhimsicalWizardryGameModeBase.h"
 #include "Public/WimsicalWizardryGameStateBase.h"
 #include "DynamicCamera.h"
+#include "Net/UnrealNetwork.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AWizard
@@ -76,10 +77,43 @@ void AWizard::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+
+		if (GetLocalRole() == ROLE_Authority)
+		{
+			SpawnCamera();
+			PlayerController->SetViewTarget(CameraActor);
+		}
+		else
+		{
+			Server_SetViewTarget();
+
+		}
 	}
+
+
+	
 
 	//Client_SpawnCamera();
 	
+}
+
+void AWizard::Server_SetViewTarget_Implementation()
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		SpawnCamera();
+		FTimerHandle timer;
+		GetWorld()->GetTimerManager().SetTimer(timer, this, &AWizard::SetViewTarget, 0.5f, false);
+        //PlayerController->SetViewTarget(CameraActor);
+    }
+}
+
+void AWizard::SetViewTarget()
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+        PlayerController->SetViewTarget(CameraActor);
+    }
 }
 
 void AWizard::PossessedBy(AController* NewController)
@@ -89,61 +123,26 @@ void AWizard::PossessedBy(AController* NewController)
 	APlayerController* PlayerController = Cast<APlayerController>(NewController);
 	if (PlayerController)
 	{
-		FVector SpawnLocation = GetActorLocation() + (FVector(0, 0, 300) - (350 * GetActorForwardVector()));
-		FRotator SpawnRotation = GetActorForwardVector().Rotation();
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = this;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnParams.Name = FName("DynamicCamera_" + GetName());
 
-		ADynamicCamera* cam = PlayerController->GetWorld()->SpawnActor<ADynamicCamera>(ADynamicCamera::StaticClass(),FVector(-940.0,0,810), FRotator(0,-20,0), SpawnParams);
 
-		//PlayerController->SetViewTargetWithBlend(cam, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
-		PlayerController->SetViewTarget(cam);
 
 	}
 
 }
 
-void AWizard::Client_SpawnCamera_Implementation()
+void AWizard::SpawnCamera()
 {
-    //Get the game mode
-    APlayerController* PlayerController = Cast<APlayerController>(Controller);
-    if (PlayerController)
-    {
+	FVector SpawnLocation = GetActorLocation() + (FVector(0, 0, 300) - (350 * GetActorForwardVector()));
+	FRotator SpawnRotation = GetActorForwardVector().Rotation();
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Name = FName("DynamicCamera_" + GetName());
 
-        AWhimsicalWizardryGameModeBase* GameMode = Cast<AWhimsicalWizardryGameModeBase>(PlayerController->GetWorld()->GetAuthGameMode());
-        UWorld* world = GetWorld();
+	ADynamicCamera* cam = GetController()->GetWorld()->SpawnActor<ADynamicCamera>(ADynamicCamera::StaticClass(), FVector(-940.0, 0, 810), FRotator(-20, 0, 0), SpawnParams);
 
-        if (GameMode)
-        {
-            FVector SpawnLocation = GetActorLocation() + (FVector(0, 0, 300) - (350 * GetActorForwardVector()));
-            FRotator SpawnRotation = GetActorForwardVector().Rotation();
-            FActorSpawnParameters SpawnParams;
-            SpawnParams.Owner = this;
-            SpawnParams.Instigator = this;
-            SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-            SpawnParams.Name = FName("DynamicCamera_" + GetName());
-
-            if (GEngine)
-                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Spawned Camera")));
-
-            ADynamicCamera* Camera = world->SpawnActor<ADynamicCamera>(GameMode->GetDynamicCameraClass(), SpawnLocation, SpawnRotation, SpawnParams);
-            if (Camera)
-            {
-                if (PlayerController)
-                {
-                    FRotator CameraRotation = (GetActorLocation() - Camera->GetCameraComponent()->GetComponentLocation()).Rotation();
-                    Camera->GetCameraComponent()->SetWorldRotation(CameraRotation);
-                    PlayerController->SetViewTargetWithBlend(Camera, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
-                }
-
-            }
-
-
-        }
-    }
+	CameraActor = cam;
 }
 
 
@@ -222,3 +221,8 @@ void AWizard::FireItemSpell()
 	}
 }
 
+void AWizard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AWizard, CameraActor);
+}

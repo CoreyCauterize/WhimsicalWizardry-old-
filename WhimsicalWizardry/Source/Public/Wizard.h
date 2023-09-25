@@ -72,11 +72,17 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
-	UFUNCTION(Client,Reliable)
-		void Client_SpawnCamera();
+	UFUNCTION(Server,Reliable)
+		void Server_SetViewTarget();
+
+	void SetViewTarget();
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	UPROPERTY(Replicated)
+		AActor* CameraActor;
+
+	void SpawnCamera();
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
