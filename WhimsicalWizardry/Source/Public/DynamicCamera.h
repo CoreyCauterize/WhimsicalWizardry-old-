@@ -14,21 +14,31 @@ class WHIMSICALWIZARDRY_API ADynamicCamera : public ACameraActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* DynamicCamera;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camewra, meta = (AllowPrivateAccess = "true"))
 		class USphereComponent* CameraSphere;
 
 public:
 	ADynamicCamera();
 
+	void GetAllWizards();
+
+	UFUNCTION(Server, Reliable)
+		void Server_GetAllWizards();
+
+
+
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 
 	FVector FindAverageLocation();
 
 public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	FORCEINLINE class UCameraComponent* GetDynamicCamera() const { return DynamicCamera; }
+	FORCEINLINE class UCameraComponent* GetDynamicCamera() const { return GetCameraComponent(); }
+
+	UPROPERTY(Replicated)
+		TArray<class AActor*> WizardList;
+
 };
