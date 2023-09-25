@@ -23,7 +23,7 @@ UKillPlaneComponent::UKillPlaneComponent()
 void UKillPlaneComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	if(GetOwnerRole() == ROLE_Authority)
 	GetOwner()->OnActorBeginOverlap.AddDynamic(this, &UKillPlaneComponent::OnOverlapBegin);
 
 	// ...

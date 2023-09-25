@@ -1,9 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 /*
-Pickup Code Written by: Owen Burgess
-Code for the powerups and pickups 
+Hazard code written by Ibrahim Al Rai
+Code that deals with map hazards against the player
 */
-
 #pragma once
 
 #include "Components/CapsuleComponent.h"
@@ -11,42 +9,33 @@ Code for the powerups and pickups
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
-#include "PickupBox.generated.h"
-
+#include "Hazard.generated.h"
 
 UCLASS()
-class WHIMSICALWIZARDRY_API APickupBox : public AActor
+class WHIMSICALWIZARDRY_API AHazard : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
-	APickupBox();
+	AHazard();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UStaticMeshComponent* pickupMesh;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UCapsuleComponent* pickupHitbox;
+	UStaticMeshComponent* HazardMesh;
 
-	UPROPERTY(Replicated)
-	class UPickupSpawner* ownerSpawner;
-	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UCapsuleComponent* HazardHitbox;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float LaunchScale = 500;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	void Obliterate();
-
-	
 public:
-	UFUNCTION()
-	void SetOwnerSpawner(UPickupSpawner* newSpawner);
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };
+
