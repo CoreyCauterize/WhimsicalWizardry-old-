@@ -97,7 +97,11 @@ void AWizard::BeginPlay()
 		if (GetLocalRole() == ROLE_Authority)
 		{
 			SpawnCamera();
-			PlayerController->SetViewTarget(CameraActor);
+			FViewTargetTransitionParams params;
+			params.BlendTime = 0.2f;
+			params.BlendFunction = EViewTargetBlendFunction::VTBlend_Linear;
+			//params.BlendExp = 2.0f;
+			PlayerController->SetViewTarget(CameraActor, params);
 		}
 		else
 		{
@@ -119,7 +123,7 @@ void AWizard::Server_SetViewTarget_Implementation()
 	{
 		SpawnCamera();
 		FTimerHandle timer;
-		GetWorld()->GetTimerManager().SetTimer(timer, this, &AWizard::SetViewTarget, 0.5f, false);
+		GetWorld()->GetTimerManager().SetTimer(timer, this, &AWizard::SetViewTarget, 0.2f, false);
         //PlayerController->SetViewTarget(CameraActor);
     }
 }
@@ -128,7 +132,11 @@ void AWizard::SetViewTarget()
 {
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-        PlayerController->SetViewTarget(CameraActor);
+		FViewTargetTransitionParams params;
+		params.BlendTime = 0.5f;
+		params.BlendFunction = EViewTargetBlendFunction::VTBlend_Linear;
+		//params.BlendExp = 2.0f;
+        PlayerController->SetViewTarget(CameraActor, params);
     }
 }
 
@@ -230,8 +238,8 @@ void AWizard::Look(const FInputActionValue& Value)
 	if (Controller != nullptr)
 	{
 		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+		//AddControllerYawInput(LookAxisVector.X);
+		//AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
 

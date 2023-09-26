@@ -24,6 +24,7 @@ ADynamicCamera::ADynamicCamera()
 	CameraBoom->bIsCameraFixed = true;
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
+	CameraBoom->ProbeChannel = ECollisionChannel::ECC_GameTraceChannel1;
 
 	GetCameraComponent()->AttachToComponent(CameraBoom, FAttachmentTransformRules::KeepRelativeTransform);
 	SetReplicates(true);
