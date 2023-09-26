@@ -120,7 +120,7 @@ private:
 		class UInputAction* FireItemSpellAction;
 
 	/* Spell Inventory Component */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Custom, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Custom, meta = (AllowPrivateAccess = "true"), Replicated)
 		class USpellInventoryComponent* SpellInventoryComponent;
 
 };

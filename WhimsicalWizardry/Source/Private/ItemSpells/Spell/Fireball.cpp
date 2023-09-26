@@ -57,7 +57,4 @@ void AFireball::OnFire(USpellInventoryComponent* belongingInventory)
 	{
 		Server_OnFire(belongingInventory);
 	}
-
-	
-	
 }

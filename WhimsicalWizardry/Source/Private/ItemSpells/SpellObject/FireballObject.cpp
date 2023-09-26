@@ -81,15 +81,12 @@ void AFireballObject::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, A
 
 	if (HitWizard)
 	{
-		//Get projectile movement velocity
-		//normalize said velocity
-		//Make new vector with x and y from velocity, but custom z to launch up
-		//multiply velocity by hitForceScale
+		FVector LaunchVector = fireballMovement->Velocity;
+		LaunchVector.Normalize();
+		LaunchVector.Z = 2;
+		LaunchVector *= 3;
 
-		//Temp:
-		FVector LaunchVector = FVector(1, 1, 2);
-
-		HitWizard->LaunchCharacter(LaunchVector * hitForceScale, false, false);
+		LaunchHitWizard(HitWizard, LaunchVector);
 		
 	}
 

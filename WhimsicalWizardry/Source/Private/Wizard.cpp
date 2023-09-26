@@ -168,3 +168,8 @@ void AWizard::FireMagicMissile_Implementation()
 {
 	MagicMissileFiring->StartFire();
 }
+
+void  AWizard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}

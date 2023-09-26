@@ -4,6 +4,8 @@
 #include "ItemSpellObject.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Net/UnrealNetwork.h"
+#include "Wizard.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AItemSpellObject::AItemSpellObject()
@@ -42,6 +44,32 @@ void AItemSpellObject::OnLifetimeEnd()
 
 void AItemSpellObject::OnReflected()
 {
+}
+
+void AItemSpellObject::NMC_LaunchHitWizard_Implementation(AWizard* hitWizard, FVector launchVelocity)
+{
+	hitWizard->LaunchCharacter(launchVelocity * hitForceScale, false, false);
+}
+
+void AItemSpellObject::LaunchHitWizard(AWizard* hitWizard, FVector launchVelocity)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		NMC_LaunchHitWizard(hitWizard, launchVelocity);
+	}
+}
+
+void AItemSpellObject::NMC_ImpulseCMC_Implementation(FVector impulse, UCharacterMovementComponent* CMC)
+{
+	CMC->AddImpulse(impulse * hitForceScale, false);
+}
+
+void AItemSpellObject::ImpulseCMC(FVector impulse, UCharacterMovementComponent* CMC)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		NMC_ImpulseCMC(impulse, CMC);
+	}
 }
 
 void  AItemSpellObject::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const

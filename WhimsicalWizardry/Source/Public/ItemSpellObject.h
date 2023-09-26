@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "ItemSpellObject.generated.h"
 
+
+
 UCLASS(abstract)
 class WHIMSICALWIZARDRY_API AItemSpellObject : public AActor
 {
@@ -40,6 +42,18 @@ public:
 	virtual void OnLifetimeEnd();
 
 	virtual void OnReflected();
+
+	UFUNCTION(NetMulticast, Reliable)
+		virtual void NMC_LaunchHitWizard(class AWizard* hitWizard, FVector launchVelocity);
+
+	UFUNCTION()
+		virtual void LaunchHitWizard(class AWizard* hitWizard, FVector launchVelocity);
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void NMC_ImpulseCMC(FVector impulse, UCharacterMovementComponent* CMC);
+
+	UFUNCTION()
+	virtual void ImpulseCMC(FVector impulse, UCharacterMovementComponent* CMC);
 
 
 

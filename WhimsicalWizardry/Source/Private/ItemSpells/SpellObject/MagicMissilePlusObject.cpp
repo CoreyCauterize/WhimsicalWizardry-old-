@@ -77,18 +77,12 @@ void AMagicMissilePlusObject::OnOverlapBegin(UPrimitiveComponent* OverlappedComp
 
 	if (HitWizard)
 	{
-		//Get projectile movement velocity
-		//normalize said velocity
-		//Make new vector with x and y from velocity, but custom z to launch up
-		//multiply velocity by hitForceScale
-
-		//Temp:
 		FVector LaunchVector = missileMovement->Velocity;
 		LaunchVector.Normalize();
 		LaunchVector.Z = 2;
-		LaunchVector *= 2000;
+		LaunchVector *= 5;
 
-		HitWizard->LaunchCharacter(LaunchVector * hitForceScale, false, false);
+		LaunchHitWizard(HitWizard, LaunchVector);
 
 	}
 
