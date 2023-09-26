@@ -1,7 +1,10 @@
 {
   "GameMaps": {
-    "maps": [  
-      { "name":"DemoMap", "info":[ "/Game/Maps/DemoStage", "placeholder!", "placeholder?" ] },
+    "maps": [
+      {
+        "name": "Demo",
+        "info": [ "/Game/Maps/DemoStage", "NumPlayers2" ]
+      }
+    ]
   }
 }
-

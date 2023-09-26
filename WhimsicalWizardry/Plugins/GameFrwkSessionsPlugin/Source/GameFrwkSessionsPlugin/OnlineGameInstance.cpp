@@ -250,7 +250,7 @@ void UOnlineGameInstance::CreateSession()
 
 void UOnlineGameInstance::ParseMaps()
 {
-	const FString JsonFilePath = FPaths::ProjectContentDir() + "/JsonFiles/maps.json";
+	const FString JsonFilePath = FPaths::ProjectContentDir() + "JsonFiles/maps.json";
 	FString JsonString; //Json converted to FString
 
 	FFileHelper::LoadFileToString(JsonString, *JsonFilePath);

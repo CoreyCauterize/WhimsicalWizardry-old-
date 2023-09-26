@@ -11,11 +11,18 @@
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "PlayerKnockedOffComponent.h"
+#include "SpellInventoryComponent.h"
+#include "ItemSpell.h"
+#include "WhimsicalWizardryGameModeBase.h"
+#include "Public/WimsicalWizardryGameStateBase.h"
+#include "DynamicCamera.h"
+#include "Net/UnrealNetwork.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AWizard
@@ -49,9 +56,9 @@ AWizard::AWizard()
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	// Create a follow camera
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	//FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	//FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	//FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	// Creating the component for killplane logic
 	PlayerKnockedOffComponent = CreateDefaultSubobject<UPlayerKnockedOffComponent>("Player Knocked Off Component");
@@ -70,6 +77,8 @@ AWizard::AWizard()
 	MagicMissileFiring = CreateDefaultSubobject<UMagicMissileFiring>("Magic Missile Firing Component");
 	MagicMissileFiring->SetFiringArrow(MagicMissileFiringArrow);
 
+
+	SetReplicates(true);
 }
 
 void AWizard::BeginPlay()
@@ -84,8 +93,89 @@ void AWizard::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+
+		if (GetLocalRole() == ROLE_Authority)
+		{
+			SpawnCamera();
+			FViewTargetTransitionParams params;
+			params.BlendTime = 0.2f;
+			params.BlendFunction = EViewTargetBlendFunction::VTBlend_Linear;
+			//params.BlendExp = 2.0f;
+			PlayerController->SetViewTarget(CameraActor, params);
+		}
+		else
+		{
+			Server_SetViewTarget();
+
+		}
 	}
+
+
+	
+
+	//Client_SpawnCamera();
+	
 }
+
+void AWizard::Server_SetViewTarget_Implementation()
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		SpawnCamera();
+		FTimerHandle timer;
+		GetWorld()->GetTimerManager().SetTimer(timer, this, &AWizard::SetViewTarget, 0.2f, false);
+        //PlayerController->SetViewTarget(CameraActor);
+    }
+}
+
+void AWizard::SetViewTarget()
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		FViewTargetTransitionParams params;
+		params.BlendTime = 0.5f;
+		params.BlendFunction = EViewTargetBlendFunction::VTBlend_Linear;
+		//params.BlendExp = 2.0f;
+        PlayerController->SetViewTarget(CameraActor, params);
+    }
+}
+
+void AWizard::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	APlayerController* PlayerController = Cast<APlayerController>(NewController);
+	if (PlayerController)
+	{
+
+
+
+	}
+
+}
+
+void AWizard::SpawnCamera()
+{
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Name = FName("DynamicCamera_" + GetName());
+
+	FVector SpawnLocation = GetActorLocation();
+	FRotator SpawnRotation = GetActorForwardVector().Rotation();
+
+	ADynamicCamera* cam = GetController()->GetWorld()->SpawnActor<ADynamicCamera>(ADynamicCamera::StaticClass(), SpawnLocation,SpawnRotation, SpawnParams);
+
+	CameraActor = cam;
+	FVector camDir = GetActorLocation() - cam->GetCameraComponent()->GetComponentLocation();
+	camDir.Normalize();
+	cam->GetCameraComponent()->SetWorldRotation(camDir.Rotation());
+
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -120,19 +210,23 @@ void AWizard::Move(const FInputActionValue& Value)
 
 	if (Controller != nullptr)
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		//// find out which way is forward
+		//const FRotator Rotation = FVector::ForwardVector.Rotation();
+		//const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		//// get forward vector
+		//const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		//// get right vector 
+		//const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+		FVector Moving = FVector(MovementVector.Y, MovementVector.X, 0.0f);
 
 		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
+		//AddMovementInput(ForwardDirection, MovementVector.Y);
+		//AddMovementInput(RightDirection, MovementVector.X);
+		AddMovementInput(Moving);
+		
 	}
 }
 
@@ -144,8 +238,8 @@ void AWizard::Look(const FInputActionValue& Value)
 	if (Controller != nullptr)
 	{
 		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+		//AddControllerYawInput(LookAxisVector.X);
+		//AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
 
@@ -165,4 +259,9 @@ void AWizard::FireItemSpell()
 void AWizard::FireMagicMissile_Implementation()
 {
 	MagicMissileFiring->StartFire();
+}
+void AWizard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AWizard, CameraActor);
 }
