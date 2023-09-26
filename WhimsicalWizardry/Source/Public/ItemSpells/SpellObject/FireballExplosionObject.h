@@ -19,6 +19,8 @@ public:
 
 	AFireballExplosionObject();
 
+	void Explode();
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -30,6 +32,8 @@ protected:
 	class USphereComponent* fireballExplosionCollision;
 
 	FTimerHandle despawnHandle;
+
+	virtual void OnLifetimeEnd() override;
 
 	
 };

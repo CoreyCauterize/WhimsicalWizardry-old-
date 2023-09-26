@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "ItemSpellObject.h"
-#include "FireballObject.generated.h"
+#include "MagicMissilePlusObject.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class WHIMSICALWIZARDRY_API AFireballObject : public AItemSpellObject
+class WHIMSICALWIZARDRY_API AMagicMissilePlusObject : public AItemSpellObject
 {
 	GENERATED_BODY()
-
+	
 public:
 
-	AFireballObject();
+	AMagicMissilePlusObject();
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -29,13 +29,13 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, Replicated)
-	class UNiagaraComponent* fireballVisual;
+	class UNiagaraComponent* missileVisual;
 
 	UPROPERTY(EditAnywhere)
-	class UBoxComponent* fireballCollision;
+	class UBoxComponent* missileCollision;
 
 	UPROPERTY(EditAnywhere)
-	class UProjectileMovementComponent* fireballMovement;
+	class UProjectileMovementComponent* missileMovement;
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -47,6 +47,4 @@ protected:
 public:
 
 	void SetVelocity(FVector inVelocity);
-
-
 };

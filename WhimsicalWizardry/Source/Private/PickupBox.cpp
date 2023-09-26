@@ -3,6 +3,7 @@
 #include "PickupBox.h"
 #include "PickupSpawner.h"
 #include "SpellInventoryComponent.h"
+#include "BounceAndRotateComponent.h"
 
 // Sets default values
 APickupBox::APickupBox()
@@ -19,8 +20,11 @@ APickupBox::APickupBox()
 	if(GetLocalRole() == ROLE_Authority)
 	pickupHitbox->OnComponentBeginOverlap.AddDynamic(this, &APickupBox::OnOverlapBegin);
 
+	moveComponent = CreateDefaultSubobject<UBounceAndRotateComponent>("Movement Component");
+
 
 	bReplicates = true;
+	SetReplicateMovement(true);
 
 }
 

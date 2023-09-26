@@ -4,6 +4,7 @@
 #include "SpellInventoryComponent.h"
 #include "ItemSpell.h"
 #include "ItemSpells/Spell/Fireball.h"
+#include "ItemSpells/Spell/MagicMissilePlus.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -23,6 +24,7 @@ USpellInventoryComponent::USpellInventoryComponent()
 
 	//TEMP (Rolling functionality to be moved to a static struct or something):
 	m_ListOfAllSpells.Add(AFireball::StaticClass());
+	m_ListOfAllSpells.Add(AMagicMissilePlus::StaticClass());
 
 	// ...
 }

@@ -13,7 +13,7 @@
 
 
 
-AFireballObject::AFireballObject()
+AFireballObject::AFireballObject() : bHasExploded(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -23,6 +23,7 @@ AFireballObject::AFireballObject()
 	needsToCallOnLifetimeEnd = true;
 
 	fireballCollision = CreateDefaultSubobject<UBoxComponent>("Fireball Collision");
+	fireballCollision->SetCollisionProfileName("OverlapAll");
 	SetRootComponent(fireballCollision);
 	
 	fireballCollision->SetBoxExtent(FVector(24, 24, 24)); //Todo: Make this a const in FireballObject header and adjust it to be the right size
@@ -91,10 +92,23 @@ void AFireballObject::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, A
 		HitWizard->LaunchCharacter(LaunchVector * hitForceScale, false, false);
 		
 	}
-	else
+
+	if (!bHasExploded)
 	{
+		bHasExploded = true;
+
+		FActorSpawnParameters spawnParams;
+
+		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		AFireballExplosionObject* spawnedFireballExplosionActor = Cast<AFireballExplosionObject>(GetWorld()->SpawnActor<AFireballExplosionObject>(FVector(0,0,20000), FRotator::ZeroRotator, spawnParams));
+
+		spawnedFireballExplosionActor->TeleportTo(GetActorLocation(), FRotator::ZeroRotator);
+
+		spawnedFireballExplosionActor->Explode();
 
 	}
+
 
 	Destroy();
 }
