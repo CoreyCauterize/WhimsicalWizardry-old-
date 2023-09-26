@@ -20,9 +20,10 @@ ADynamicCamera::ADynamicCamera()
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	CameraBoom->SetupAttachment(CameraSphere);
-	CameraBoom->TargetArmLength = 600.0f;
+	CameraBoom->TargetArmLength = 1200.0f;
 	CameraBoom->bIsCameraFixed = true;
 	CameraBoom->bUsePawnControlRotation = true;
+	CameraBoom->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
 
 	GetCameraComponent()->AttachToComponent(CameraBoom, FAttachmentTransformRules::KeepRelativeTransform);
 	SetReplicates(true);

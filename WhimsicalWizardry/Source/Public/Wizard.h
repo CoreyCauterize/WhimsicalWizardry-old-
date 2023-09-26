@@ -25,12 +25,6 @@ class AWizard : public ACharacter
 public: 
 	AWizard();
 
-	/* -- Base Camera ----------------------------------------------------------------- */
-
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	/* -- Basic Magic Missile Projectile Firing	---------------------------------------- */
 

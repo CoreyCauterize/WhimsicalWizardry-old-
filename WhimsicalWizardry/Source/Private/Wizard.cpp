@@ -202,19 +202,23 @@ void AWizard::Move(const FInputActionValue& Value)
 
 	if (Controller != nullptr)
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		//// find out which way is forward
+		//const FRotator Rotation = FVector::ForwardVector.Rotation();
+		//const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		//// get forward vector
+		//const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		//// get right vector 
+		//const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+		FVector Moving = FVector(MovementVector.Y, MovementVector.X, 0.0f);
 
 		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
+		//AddMovementInput(ForwardDirection, MovementVector.Y);
+		//AddMovementInput(RightDirection, MovementVector.X);
+		AddMovementInput(Moving);
+		
 	}
 }
 
