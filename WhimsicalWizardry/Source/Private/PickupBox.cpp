@@ -2,6 +2,7 @@
 
 #include "PickupBox.h"
 #include "PickupSpawner.h"
+#include "Pooling/PoolableActor.h"
 #include "SpellInventoryComponent.h"
 
 // Sets default values
@@ -11,17 +12,16 @@ APickupBox::APickupBox()
 	PrimaryActorTick.bCanEverTick = true;
 
 	pickupHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Pickup Hitbox"));
-	pickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pickup Mesh"));
 	RootComponent = pickupHitbox;
+	pickupHitbox->SetSimulatePhysics(false);
+
+	pickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pickup Mesh"));
 	pickupMesh->SetupAttachment(pickupHitbox);
 
-	pickupHitbox->SetSimulatePhysics(false);
 	if(GetLocalRole() == ROLE_Authority)
 	pickupHitbox->OnComponentBeginOverlap.AddDynamic(this, &APickupBox::OnOverlapBegin);
 
-
 	bReplicates = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -38,6 +38,7 @@ void APickupBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor
 	{
 		return;
 	}
+
 	USpellInventoryComponent* tempInv;
 	// Calls the spell inventory component on the wizardx
 	tempInv = Cast <USpellInventoryComponent>(wizard->GetComponentByClass(USpellInventoryComponent::StaticClass()));
@@ -48,17 +49,15 @@ void APickupBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor
 	
 }
 
-void APickupBox::Obliterate()
+/*void APickupBox::Obliterate()
 {
 	Destroy();
-}
+}*/
 
-void APickupBox::SetOwnerSpawner(UPickupSpawner* newSpawner)
-{
-	ownerSpawner = newSpawner;
-}
-
-
+//void APickupBox::SetOwnerSpawner(UPickupSpawner* newSpawner)
+//{
+//	ownerSpawner = newSpawner;
+//}
 
 // Called every frame
 void APickupBox::Tick(float DeltaTime)
@@ -67,8 +66,8 @@ void APickupBox::Tick(float DeltaTime)
 	
 }
 
-void APickupBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(APickupBox, ownerSpawner);
-}
+//void APickupBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//	DOREPLIFETIME(APickupBox, ownerSpawner);
+//}

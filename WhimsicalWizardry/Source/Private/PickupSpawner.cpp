@@ -3,6 +3,8 @@
 
 #include "PickupSpawner.h"
 #include "PickupBox.h"
+#include "Pooling/ActorPool.h"
+#include "Pooling/PoolableActor.h"
 #include <Kismet/GameplayStatics.h>
 
 // Sets default values for this component's properties
@@ -11,6 +13,13 @@ UPickupSpawner::UPickupSpawner()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+
+	PickupPool = CreateDefaultSubobject<UActorPool>(TEXT("Pickup Pool"));
+	PickupPool->SetPoolableActorClass(PickupBox);
+	PickupPool->SetSizeOfPool(SpawnAmount);
+	PickupPool->SetPooledActorsHaveOutOfPoolLifespan(false);
+	PickupPool->SetPooledActorsShouldCollide(true);
+	PickupPool->SetPooledActorsShouldTick(true);
 	
 	//PickupBox = CreateDefaultSubobject<APickupBox>(TEXT("Pickup Box"));
 	// ...
@@ -21,6 +30,7 @@ UPickupSpawner::UPickupSpawner()
 void UPickupSpawner::BeginPlay()
 {
 	Super::BeginPlay();
+
 	SpawnPickups();
 	// ...
 	
@@ -28,20 +38,21 @@ void UPickupSpawner::BeginPlay()
 
 void UPickupSpawner::Server_SpawnPickups_Implementation(FVector SpawnLocation)
 {
-	UWorld* coolWorld = GetWorld();
-	APickupBox* tempBox =Cast<APickupBox>( coolWorld->SpawnActor(PickupBox, &SpawnLocation, &FRotator::ZeroRotator));
+	APickupBox* box = Cast<APickupBox>(PickupPool->ActivateASpawnedActor());
+	box->TeleportTo(SpawnLocation, FRotator::ZeroRotator);
 
-	tempBox->SetOwnerSpawner(this);
-	
+	/*UWorld* coolWorld = GetWorld();
+	APickupBox* tempBox =Cast<APickupBox>( coolWorld->SpawnActor(PickupBox, &SpawnLocation, &FRotator::ZeroRotator));*/
+
+	//tempBox->SetOwnerSpawner(this);
 }
 
-void UPickupSpawner::Server_DelaySpawn_Implementation()
-{
-	
-		FTimerHandle timer;
-		GetWorld()->GetTimerManager().SetTimer(timer, this, &UPickupSpawner::SpawnPickups, FMath::RandRange(10,30), false);
-	
-}
+//void UPickupSpawner::Server_DelaySpawn_Implementation()
+//{
+//		FTimerHandle timer;
+//		GetWorld()->GetTimerManager().SetTimer(timer, this, &UPickupSpawner::SpawnPickups, FMath::RandRange(10,30), false);
+//	
+//}
 
 void UPickupSpawner::SpawnPickups()
 {

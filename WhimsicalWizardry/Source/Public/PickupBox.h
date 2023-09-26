@@ -2,6 +2,8 @@
 /*
 Pickup Code Written by: Owen Burgess
 Code for the powerups and pickups 
+
+Pooling implementation by: Derek Fallows
 */
 
 #pragma once
@@ -15,7 +17,7 @@ Code for the powerups and pickups
 
 
 UCLASS()
-class WHIMSICALWIZARDRY_API APickupBox : public AActor
+class WHIMSICALWIZARDRY_API APickupBox : public APoolableActor
 {
 	GENERATED_BODY()
 	
@@ -29,8 +31,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UCapsuleComponent* pickupHitbox;
 
-	UPROPERTY(Replicated)
-	class UPickupSpawner* ownerSpawner;
+	//UPROPERTY(Replicated)
+	//class UPickupSpawner* ownerSpawner;
 	
 
 protected:
@@ -40,7 +42,7 @@ protected:
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	void Obliterate();
+	//void Obliterate();
 
 	
 public:
