@@ -47,12 +47,13 @@ void UKillPlaneComponent::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherA
 	if (OtherActor && OtherActor != GetOwner())
 	{
 		AWizard* collidingWizard = Cast<AWizard>(OtherActor);
-
 		if (collidingWizard)
 		{
 			AWhimsicalWizardryGameModeBase* wWGameMode = Cast<AWhimsicalWizardryGameModeBase>(GetWorld()->GetAuthGameMode());
 
 			AWimsicalWizardryGameStateBase* wWGameState = wWGameMode->GetGameState<AWimsicalWizardryGameStateBase>();
+
+
 
 			AWimsicalWizardryPlayerState* wWPlayerState;
 

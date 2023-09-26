@@ -131,6 +131,22 @@ void AMagicMissile::OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound,
 			spawnLocation, FRotator::ZeroRotator);
 
+
+
+	//TEMP ADD IN FOR PROTO BUILD////////////////////////////////
+	AWizard* hitWizard = Cast<AWizard>(OtherActor); /////////////
+	if (hitWizard)									/////////////
+	{												/////////////
+		FVector launchVector = Movement->Velocity;	/////////////
+		launchVector.Z = 1.5;						/////////////
+		launchVector.Normalize();					/////////////
+		launchVector *= 1000;						/////////////
+		hitWizard->LaunchCharacter(launchVector, false, false);//
+	}												/////////////
+	//END TEMP ADD IN FOR PROTO BUILD////////////////////////////
+
+
+
 	// Deactivate the projectile so it can be used again later
 	Deactivate();
 }
