@@ -3,6 +3,7 @@
 #include "PickupBox.h"
 #include "PickupSpawner.h"
 #include "SpellInventoryComponent.h"
+#include "Wizard.h"
 
 // Sets default values
 APickupBox::APickupBox()
@@ -17,11 +18,11 @@ APickupBox::APickupBox()
 
 	pickupHitbox->SetSimulatePhysics(false);
 	if(GetLocalRole() == ROLE_Authority)
-	pickupHitbox->OnComponentBeginOverlap.AddDynamic(this, &APickupBox::OnOverlapBegin);
+		pickupHitbox->OnComponentBeginOverlap.AddDynamic(this, &APickupBox::OnOverlapBegin);
 
 
 	bReplicates = true;
-
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -33,14 +34,15 @@ void APickupBox::BeginPlay()
 
 void APickupBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ACharacter* wizard = Cast<ACharacter>(OtherActor);
+	AWizard* wizard = Cast<AWizard>(OtherActor);
 	if (wizard == nullptr)
 	{
 		return;
 	}
 	USpellInventoryComponent* tempInv;
 	// Calls the spell inventory component on the wizardx
-	tempInv = Cast <USpellInventoryComponent>(wizard->GetComponentByClass(USpellInventoryComponent::StaticClass()));
+	//tempInv = Cast <USpellInventoryComponent>(wizard->GetComponentByClass(USpellInventoryComponent::StaticClass()));
+	tempInv = wizard->GetSpellInventory();
 	tempInv->TryAddSpell();
 	ownerSpawner->Server_DelaySpawn();
 	FTimerHandle timer;

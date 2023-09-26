@@ -21,6 +21,7 @@ UPickupSpawner::UPickupSpawner()
 void UPickupSpawner::BeginPlay()
 {
 	Super::BeginPlay();
+	SetIsReplicated(true);
 	SpawnPickups();
 	// ...
 	
@@ -30,8 +31,8 @@ void UPickupSpawner::Server_SpawnPickups_Implementation(FVector SpawnLocation)
 {
 	UWorld* coolWorld = GetWorld();
 	APickupBox* tempBox =Cast<APickupBox>( coolWorld->SpawnActor(PickupBox, &SpawnLocation, &FRotator::ZeroRotator));
-
-	tempBox->SetOwnerSpawner(this);
+	tempBox->ownerSpawner = this;
+	//tempBox->SetOwnerSpawner(this);
 	
 }
 
