@@ -25,14 +25,23 @@ void AItemSpell::Tick(float DeltaTime)
 
 }
 
-void AItemSpell::OnFire(USpellInventoryComponent* belongingInventory)
+void AItemSpell::Server_OnFire_Implementation(USpellInventoryComponent* belongingInventory)
 {
-
 	if (removeFromInventoryOnFired)
 	{
 		belongingInventory->CycleSpells();
 		Destroy();
 	}
+}
+
+void AItemSpell::OnFire(USpellInventoryComponent* belongingInventory)
+{
+
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		Server_OnFire(belongingInventory);
+	}
+
 }
 
 

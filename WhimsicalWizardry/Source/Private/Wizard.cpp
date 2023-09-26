@@ -110,6 +110,8 @@ void AWizard::BeginPlay()
 		}
 	}
 
+	//Cast<APlayerController>(GetController())->ConsoleCommand("show collision", false);
+
 
 	
 
@@ -196,7 +198,7 @@ void AWizard::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompon
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AWizard::Look);
 
 		//Firing item spells
-		EnhancedInputComponent->BindAction(FireItemSpellAction, ETriggerEvent::Triggered, this, &AWizard::FireItemSpell);
+		EnhancedInputComponent->BindAction(FireItemSpellAction, ETriggerEvent::Started, this, &AWizard::FireItemSpell);
 
 		//Firing magic missile
 		EnhancedInputComponent->BindAction(FireMagicMissileAction, ETriggerEvent::Triggered, this, &AWizard::FireMagicMissile);
@@ -245,6 +247,13 @@ void AWizard::Look(const FInputActionValue& Value)
 
 void AWizard::FireItemSpell()
 {
+	Server_FireItemSpell();
+
+}
+
+
+void AWizard::Server_FireItemSpell_Implementation()
+{
 	if (SpellInventoryComponent)
 	{
 		AItemSpell* firstSpell = SpellInventoryComponent->GetFirstHeldSpell();
@@ -254,6 +263,8 @@ void AWizard::FireItemSpell()
 			firstSpell->OnFire(SpellInventoryComponent);
 		}
 	}
+
+
 }
 
 void AWizard::FireMagicMissile_Implementation()

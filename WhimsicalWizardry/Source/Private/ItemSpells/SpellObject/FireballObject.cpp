@@ -6,10 +6,14 @@
 #include "Components/BoxComponent.h"
 #include "Wizard.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "ItemSpells/SpellObject/FireballExplosionObject.h"
 
 
 
-AFireballObject::AFireballObject()
+
+AFireballObject::AFireballObject() : bHasExploded(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -19,9 +23,15 @@ AFireballObject::AFireballObject()
 	needsToCallOnLifetimeEnd = true;
 
 	fireballCollision = CreateDefaultSubobject<UBoxComponent>("Fireball Collision");
+	fireballCollision->SetCollisionProfileName("OverlapAll");
 	SetRootComponent(fireballCollision);
+	
 	fireballCollision->SetBoxExtent(FVector(24, 24, 24)); //Todo: Make this a const in FireballObject header and adjust it to be the right size
-	fireballCollision->OnComponentBeginOverlap.AddDynamic(this, &AFireballObject::OnOverlapBegin);
+	
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		fireballCollision->OnComponentBeginOverlap.AddDynamic(this, &AFireballObject::OnOverlapBegin);
+	}
 
 	fireballVisual = CreateDefaultSubobject<UNiagaraComponent>("Fireball Visual");
 	fireballVisual->SetupAttachment(RootComponent);
@@ -39,6 +49,10 @@ AFireballObject::AFireballObject()
 	
 	FQuat rot(0, 180, 0, 0);
 	fireballCollision->SetRelativeRotation(rot);
+
+	fireballMovement = CreateDefaultSubobject<UProjectileMovementComponent>("Fireball Movement");
+	fireballMovement->SetUpdatedComponent(RootComponent);
+	fireballMovement->ProjectileGravityScale = 1.5f;
 }
 
 void AFireballObject::Tick(float DeltaTime)
@@ -67,20 +81,43 @@ void AFireballObject::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, A
 
 	if (HitWizard)
 	{
-		//Get projectile movement velocity
-		//normalize said velocity
-		//Make new vector with x and y from velocity, but custom z to launch up
-		//multiply velocity by hitForceScale
+		FVector LaunchVector = fireballMovement->Velocity;
+		LaunchVector.Normalize();
+		LaunchVector.Z = 2;
+		LaunchVector *= 3;
 
-		//Temp:
-		FVector LaunchVector = FVector(1, 1, 2);
-
-		HitWizard->LaunchCharacter(LaunchVector * hitForceScale, false, false);
+		LaunchHitWizard(HitWizard, LaunchVector);
+		
 	}
-	else
+
+	if (!bHasExploded)
 	{
+		bHasExploded = true;
+
+		FActorSpawnParameters spawnParams;
+
+		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		AFireballExplosionObject* spawnedFireballExplosionActor = Cast<AFireballExplosionObject>(GetWorld()->SpawnActor<AFireballExplosionObject>(FVector(0,0,20000), FRotator::ZeroRotator, spawnParams));
+
+		spawnedFireballExplosionActor->TeleportTo(GetActorLocation(), FRotator::ZeroRotator);
+
+		spawnedFireballExplosionActor->Explode();
 
 	}
+
 
 	Destroy();
+}
+
+void AFireballObject::SetVelocity(FVector inVelocity)
+{
+	fireballMovement->Velocity = inVelocity;
+}
+
+void  AFireballObject::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFireballObject, fireballVisual);
 }

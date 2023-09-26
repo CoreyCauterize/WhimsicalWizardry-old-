@@ -3,6 +3,7 @@
 #include "PickupBox.h"
 #include "PickupSpawner.h"
 #include "SpellInventoryComponent.h"
+#include "BounceAndRotateComponent.h"
 
 // Sets default values
 APickupBox::APickupBox()
@@ -19,8 +20,11 @@ APickupBox::APickupBox()
 	if(GetLocalRole() == ROLE_Authority)
 	pickupHitbox->OnComponentBeginOverlap.AddDynamic(this, &APickupBox::OnOverlapBegin);
 
+	moveComponent = CreateDefaultSubobject<UBounceAndRotateComponent>("Movement Component");
+
 
 	bReplicates = true;
+	SetReplicateMovement(true);
 
 }
 
@@ -41,7 +45,12 @@ void APickupBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor
 	USpellInventoryComponent* tempInv;
 	// Calls the spell inventory component on the wizardx
 	tempInv = Cast <USpellInventoryComponent>(wizard->GetComponentByClass(USpellInventoryComponent::StaticClass()));
+
 	tempInv->TryAddSpell();
+
+	//AItemSpell* rolledSpell = tempInv->RollSpell();
+	//tempInv->TryAddSpell(rolledSpell);
+
 	ownerSpawner->Server_DelaySpawn();
 	FTimerHandle timer;
 	GetWorld()->GetTimerManager().SetTimer(timer, this, &APickupBox::Obliterate, 0.1f, false);

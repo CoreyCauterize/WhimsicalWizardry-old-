@@ -4,28 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "ItemSpell.h"
-#include "Fireball.generated.h"
+#include "MagicMissilePlus.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class WHIMSICALWIZARDRY_API AFireball : public AItemSpell
+class WHIMSICALWIZARDRY_API AMagicMissilePlus : public AItemSpell
 {
 	GENERATED_BODY()
 
 public:
-
-	AFireball();
+	AMagicMissilePlus();
 
 	//UFUNCTION(Server, Reliable)
 	void Server_OnFire_Implementation(USpellInventoryComponent* belongingInventory) override;
 	//virtual void Server_OnFire(USpellInventoryComponent* belongingInventory) override;
 
 	virtual void OnFire(USpellInventoryComponent* belongingInventory) override;
-
-protected:
-
-
 	
 };
