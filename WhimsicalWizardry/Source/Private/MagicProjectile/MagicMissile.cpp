@@ -76,7 +76,7 @@ void AMagicMissile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorForwardVector() * 100.0f, FColor::Red, false, 5.0f, 1, 100.0f); 
+	//DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorForwardVector() * 100.0f, FColor::Red, false, 5.0f, 1, 100.0f); 
 }
 
 // Take projectile out of the pool
@@ -130,6 +130,22 @@ void AMagicMissile::OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor
 	if (ImpactSound != nullptr)
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound,
 			spawnLocation, FRotator::ZeroRotator);
+
+
+
+	//TEMP ADD IN FOR PROTO BUILD////////////////////////////////
+	AWizard* hitWizard = Cast<AWizard>(OtherActor); /////////////
+	if (hitWizard)									/////////////
+	{												/////////////
+		FVector launchVector = Movement->Velocity;	/////////////
+		launchVector.Z = 1.5;						/////////////
+		launchVector.Normalize();					/////////////
+		launchVector *= 1000;						/////////////
+		hitWizard->LaunchCharacter(launchVector, false, false);//
+	}												/////////////
+	//END TEMP ADD IN FOR PROTO BUILD////////////////////////////
+
+
 
 	// Deactivate the projectile so it can be used again later
 	Deactivate();
