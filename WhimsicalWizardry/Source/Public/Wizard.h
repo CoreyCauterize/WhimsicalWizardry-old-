@@ -25,12 +25,6 @@ class AWizard : public ACharacter
 public: 
 	AWizard();
 
-	/* -- Base Camera ----------------------------------------------------------------- */
-
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	/* -- Basic Magic Missile Projectile Firing	---------------------------------------- */
 
@@ -126,4 +120,21 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Custom, meta = (AllowPrivateAccess = "true"), Replicated)
 		class USpellInventoryComponent* SpellInventoryComponent;
 
+	UFUNCTION(Server,Reliable)
+		void Server_SetViewTarget();
+
+	void SetViewTarget();
+
+	virtual void PossessedBy(AController* NewController) override;
+
+	UPROPERTY(Replicated)
+		AActor* CameraActor;
+
+	void SpawnCamera();
+public:
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
+
