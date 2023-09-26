@@ -25,7 +25,7 @@ void AFireball::Server_OnFire_Implementation(USpellInventoryComponent* belonging
 	if (castingCharacter)
 	{
 		spawnVelocity = castingCharacter->GetActorRotation().Vector() * 600; //Todo: Make the hardcoded 600 a const member variable in Fireball
-		spawnLocation = initialLocation + (spawnVelocity.GetSafeNormal() * 60); //Todo: Make the hardcoded 60 a member variable in ItemSpell
+		spawnLocation = initialLocation + (spawnVelocity.GetSafeNormal() * 75); //Todo: Make the hardcoded 75 a member variable in ItemSpell
 		spawnRotation = castingCharacter->GetActorRotation();
 		spawnVelocity.Z = 900;
 
@@ -53,8 +53,5 @@ void AFireball::Server_OnFire_Implementation(USpellInventoryComponent* belonging
 
 void AFireball::OnFire(USpellInventoryComponent* belongingInventory)
 {
-	if (GetLocalRole() == ROLE_Authority)
-	{
-		Server_OnFire(belongingInventory);
-	}
+	Super::OnFire(belongingInventory);
 }

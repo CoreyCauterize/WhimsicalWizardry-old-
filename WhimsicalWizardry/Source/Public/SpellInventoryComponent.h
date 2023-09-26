@@ -25,7 +25,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Transient, Replicated) //todo: figure out how this shit works
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated) //todo: figure out how this shit works
 		TArray<AItemSpell*> heldSpells;
 
 	const int MAX_NUM_SPELLS = 2;
@@ -46,14 +46,18 @@ public:
 	UFUNCTION()
 	void CycleSpells();
 
+	UFUNCTION(Server, Reliable)
+	void Server_AddSpell(AItemSpell* spellToAdd);
 
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnSpell(UClass* rolledSpell);
 
 
 //STUFF TO BE MOVED:
 
 public:
 
-	class AItemSpell* RollSpell();
+	void RollSpell();
 
 protected:
 

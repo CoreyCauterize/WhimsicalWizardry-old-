@@ -67,6 +67,9 @@ private:
 	// Called for firing item spell input
 	void FireItemSpell();
 
+	UFUNCTION(Server, Reliable)
+		void Server_FireItemSpell();
+
 private:
 
 	/* -- Base Follow Camera --------------------------------------------------------------- */

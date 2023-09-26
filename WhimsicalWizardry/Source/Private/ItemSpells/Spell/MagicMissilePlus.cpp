@@ -24,7 +24,7 @@ void AMagicMissilePlus::Server_OnFire_Implementation(USpellInventoryComponent* b
 	if (castingCharacter)
 	{
 		spawnVelocity = castingCharacter->GetActorRotation().Vector() * 600; //Todo: Make the hardcoded 600 a const member variable in Fireball
-		spawnLocation = initialLocation + (spawnVelocity.GetSafeNormal() * 60); //Todo: Make the hardcoded 60 a member variable in ItemSpell
+		spawnLocation = initialLocation + (spawnVelocity.GetSafeNormal() * 75); //Todo: Make the hardcoded 75 a member variable in ItemSpell
 		spawnRotation = castingCharacter->GetActorRotation();
 		spawnVelocity.Z = 0;
 

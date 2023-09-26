@@ -45,7 +45,12 @@ void APickupBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor
 	USpellInventoryComponent* tempInv;
 	// Calls the spell inventory component on the wizardx
 	tempInv = Cast <USpellInventoryComponent>(wizard->GetComponentByClass(USpellInventoryComponent::StaticClass()));
+
 	tempInv->TryAddSpell();
+
+	//AItemSpell* rolledSpell = tempInv->RollSpell();
+	//tempInv->TryAddSpell(rolledSpell);
+
 	ownerSpawner->Server_DelaySpawn();
 	FTimerHandle timer;
 	GetWorld()->GetTimerManager().SetTimer(timer, this, &APickupBox::Obliterate, 0.1f, false);
