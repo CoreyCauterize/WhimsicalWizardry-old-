@@ -61,6 +61,9 @@ private:
 	// Called for firing item spell input
 	void FireItemSpell();
 
+	UFUNCTION(Server, Reliable)
+		void Server_FireItemSpell();
+
 private:
 
 	/* -- Base Follow Camera --------------------------------------------------------------- */
@@ -114,7 +117,7 @@ private:
 		class UInputAction* FireItemSpellAction;
 
 	/* Spell Inventory Component */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Custom, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Custom, meta = (AllowPrivateAccess = "true"), Replicated)
 		class USpellInventoryComponent* SpellInventoryComponent;
 
 	UFUNCTION(Server,Reliable)

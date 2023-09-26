@@ -76,7 +76,7 @@ void AMagicMissile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorForwardVector() * 100.0f, FColor::Red, false, 5.0f, 1, 100.0f); 
+	//DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorForwardVector() * 100.0f, FColor::Red, false, 5.0f, 1, 100.0f); 
 }
 
 // Take projectile out of the pool

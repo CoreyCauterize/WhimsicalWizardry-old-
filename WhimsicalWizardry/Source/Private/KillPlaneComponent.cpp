@@ -46,30 +46,32 @@ void UKillPlaneComponent::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherA
 {
 	if (OtherActor && OtherActor != GetOwner())
 	{
-		AWhimsicalWizardryGameModeBase* wWGameMode = Cast<AWhimsicalWizardryGameModeBase>(GetWorld()->GetAuthGameMode());
-
-		AWimsicalWizardryGameStateBase* wWGameState = wWGameMode->GetGameState<AWimsicalWizardryGameStateBase>();
-
 		AWizard* collidingWizard = Cast<AWizard>(OtherActor);
 
-		AWimsicalWizardryPlayerState* wWPlayerState;
-		
-		wWPlayerState = Cast<AWimsicalWizardryPlayerState>(collidingWizard->GetPlayerState());
-
-		wWPlayerState->takePlayerLife();
-
-		if (wWGameState->lastPlayerStanding())
+		if (collidingWizard)
 		{
-			wWGameState->score();
-			wWGameState->resetGame();
+			AWhimsicalWizardryGameModeBase* wWGameMode = Cast<AWhimsicalWizardryGameModeBase>(GetWorld()->GetAuthGameMode());
+
+			AWimsicalWizardryGameStateBase* wWGameState = wWGameMode->GetGameState<AWimsicalWizardryGameStateBase>();
+
+			AWimsicalWizardryPlayerState* wWPlayerState;
+
+			wWPlayerState = Cast<AWimsicalWizardryPlayerState>(collidingWizard->GetPlayerState());
+
+			wWPlayerState->takePlayerLife();
+
+			if (wWGameState->lastPlayerStanding())
+			{
+				wWGameState->score();
+				wWGameState->resetGame();
+			}
+
+			UPlayerKnockedOffComponent* knockedOffComp = OtherActor->GetComponentByClass<UPlayerKnockedOffComponent>();
+
+			if (knockedOffComp)
+			{
+				knockedOffComp->OnKnockedOff();
+			}
 		}
-
-		UPlayerKnockedOffComponent* knockedOffComp = OtherActor->GetComponentByClass<UPlayerKnockedOffComponent>();
-
-		if (knockedOffComp)
-		{
-			knockedOffComp->OnKnockedOff();
-		}
-
 	}
 }

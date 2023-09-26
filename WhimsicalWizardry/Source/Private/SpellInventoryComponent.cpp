@@ -4,6 +4,9 @@
 #include "SpellInventoryComponent.h"
 #include "ItemSpell.h"
 #include "ItemSpells/Spell/Fireball.h"
+#include "ItemSpells/Spell/MagicMissilePlus.h"
+#include "Net/UnrealNetwork.h"
+
 
 // Sets default values for this component's properties
 USpellInventoryComponent::USpellInventoryComponent()
@@ -17,10 +20,14 @@ USpellInventoryComponent::USpellInventoryComponent()
 		heldSpells.Add(nullptr);
 	}
 
+	
+
 	//TEMP (Rolling functionality to be moved to a static struct or something):
 	m_ListOfAllSpells.Add(AFireball::StaticClass());
+	m_ListOfAllSpells.Add(AMagicMissilePlus::StaticClass());
 
-	// ...
+	
+	// ..
 }
 
 
@@ -29,8 +36,7 @@ void USpellInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//TEMP FOR DEBUGGING:
-	TryAddSpell();
+	SetIsReplicated(true);
 
 	// ...
 	
@@ -49,29 +55,24 @@ void USpellInventoryComponent::TryAddSpell(AItemSpell* spellToAdd)
 {
 	if (spellToAdd)
 	{
-		for (int i = 0; i < MAX_NUM_SPELLS; i++)
+		if (GetOwner()->GetLocalRole() == ROLE_Authority)
 		{
-			if (heldSpells[i] == nullptr)
-			{
-				heldSpells[i] = spellToAdd;
-				spellToAdd->OnRolled();
-				return;
-			}
+			Server_AddSpell(spellToAdd);
 		}
 	}
 	else
 	{
-		AItemSpell* rolledSpell = RollSpell();
+		RollSpell();
 
-		for (int i = 0; i < MAX_NUM_SPELLS; i++)
-		{
-			if (heldSpells[i] == nullptr)
-			{
-				heldSpells[i] = rolledSpell;
-				rolledSpell->OnRolled();
-				return;
-			}
-		}
+		//for (int i = 0; i < MAX_NUM_SPELLS; i++)
+		//{
+		//	if (heldSpells[i] == nullptr)
+		//	{
+		//		heldSpells[i] = rolledSpell;
+		//		rolledSpell->OnRolled();
+		//		return;
+		//	}
+		//}
 	}
 }
 
@@ -88,15 +89,56 @@ void USpellInventoryComponent::CycleSpells()
 	}
 }
 
-AItemSpell* USpellInventoryComponent::RollSpell()
+void USpellInventoryComponent::Server_SpawnSpell_Implementation(UClass* rolledSpell)
+{
+	FActorSpawnParameters params;
+	params.Owner = GetOwner();
+	
+	AItemSpell* spawned = Cast<AItemSpell>(GetWorld()->SpawnActor(rolledSpell));
+	for (int i = 0; i < MAX_NUM_SPELLS; i++)
+	{
+		if (heldSpells[i] == nullptr)
+		{
+			heldSpells[i] = spawned;
+			spawned->OnRolled();
+			return;
+		}
+	}
+}
+
+void USpellInventoryComponent::Server_AddSpell_Implementation(AItemSpell* spellToAdd)
+{
+	for (int i = 0; i < MAX_NUM_SPELLS; i++)
+	{
+		if (heldSpells[i] == nullptr)
+		{
+			if (GetOwner()->GetLocalRole() == ROLE_Authority)
+			{
+				heldSpells[i] = spellToAdd;
+				spellToAdd->OnRolled();
+			}
+			return;
+		}
+	}
+	
+}
+
+void USpellInventoryComponent::RollSpell()
 {
 	if (m_ListOfAllSpells.Num() > 0)
 	{
 		int spellNum = FMath::RandRange(0, m_ListOfAllSpells.Num() - 1);
 
-		AItemSpell* rolledSpell = Cast<AItemSpell>(GetWorld()->SpawnActor(m_ListOfAllSpells[spellNum]));
+		//AItemSpell* rolledSpell = Cast<AItemSpell>(GetWorld()->SpawnActor(m_ListOfAllSpells[spellNum]));
+		Server_SpawnSpell(m_ListOfAllSpells[spellNum]);
 
-		return rolledSpell;
 	}
-	return nullptr;
+
+}
+
+void  USpellInventoryComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps)const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USpellInventoryComponent, heldSpells);
 }

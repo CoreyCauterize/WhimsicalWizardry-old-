@@ -1,18 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ItemSpells/Spell/Fireball.h"
-#include "ItemSpells/SpellObject/FireballObject.h"
+#include "ItemSpells/Spell/MagicMissilePlus.h"
+#include "ItemSpells/SpellObject/MagicMissilePlusObject.h"
 #include "SpellInventoryComponent.h"
 #include "GameFramework/Character.h"
 
-
-AFireball::AFireball()
+AMagicMissilePlus::AMagicMissilePlus()
 {
-	removeFromInventoryOnFired = true; //I think it's stupid you can't do this in the initializer list
+	removeFromInventoryOnFired = true;
 }
 
-void AFireball::Server_OnFire_Implementation(USpellInventoryComponent* belongingInventory)
+void AMagicMissilePlus::Server_OnFire_Implementation(USpellInventoryComponent* belongingInventory)
 {
 	FVector initialLocation = belongingInventory->GetOwner()->GetActorLocation();
 
@@ -27,20 +26,20 @@ void AFireball::Server_OnFire_Implementation(USpellInventoryComponent* belonging
 		spawnVelocity = castingCharacter->GetActorRotation().Vector() * 600; //Todo: Make the hardcoded 600 a const member variable in Fireball
 		spawnLocation = initialLocation + (spawnVelocity.GetSafeNormal() * 75); //Todo: Make the hardcoded 75 a member variable in ItemSpell
 		spawnRotation = castingCharacter->GetActorRotation();
-		spawnVelocity.Z = 900;
+		spawnVelocity.Z = 0;
 
 		FActorSpawnParameters spawnParams;
 
 		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		AActor* spawnedFireballActor = GetWorld()->SpawnActor<AFireballObject>(spawnLocation, spawnRotation, spawnParams);
+		AActor* spawnedMissileActor = GetWorld()->SpawnActor<AMagicMissilePlusObject>(spawnLocation, spawnRotation, spawnParams);
 
-		AFireballObject* spawnedFireball = Cast<AFireballObject>(spawnedFireballActor);
+		AMagicMissilePlusObject* spawnedMissile = Cast<AMagicMissilePlusObject>(spawnedMissileActor);
 
 
-		if (spawnedFireball)
+		if (spawnedMissile)
 		{
-			spawnedFireball->SetVelocity(spawnVelocity);
+			spawnedMissile->SetVelocity(spawnVelocity);
 		}
 	}
 	else //This is not a character casting this, so just send it in a random direction
@@ -51,7 +50,10 @@ void AFireball::Server_OnFire_Implementation(USpellInventoryComponent* belonging
 	Super::Server_OnFire_Implementation(belongingInventory);
 }
 
-void AFireball::OnFire(USpellInventoryComponent* belongingInventory)
+void AMagicMissilePlus::OnFire(USpellInventoryComponent* belongingInventory)
 {
-	Super::OnFire(belongingInventory);
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		Server_OnFire(belongingInventory);
+	}
 }

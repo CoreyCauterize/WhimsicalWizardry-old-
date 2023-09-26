@@ -30,6 +30,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(Server, Reliable)
+	virtual void Server_OnFire(USpellInventoryComponent* belongingInventory);
+
 	virtual void OnFire(USpellInventoryComponent* belongingInventory);
 
 

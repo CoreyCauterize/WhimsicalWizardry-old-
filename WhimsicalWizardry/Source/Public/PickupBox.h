@@ -31,6 +31,9 @@ public:
 
 	UPROPERTY(Replicated)
 	class UPickupSpawner* ownerSpawner;
+
+	UPROPERTY(EditAnywhere)
+	class UBounceAndRotateComponent* moveComponent;
 	
 
 protected:
