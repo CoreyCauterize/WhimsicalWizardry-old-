@@ -2,6 +2,7 @@
 
 #include "PickupBox.h"
 #include "PickupSpawner.h"
+#include "Pooling/ActorPool.h"
 #include "Pooling/PoolableActor.h"
 #include "SpellInventoryComponent.h"
 
@@ -33,20 +34,18 @@ void APickupBox::BeginPlay()
 
 void APickupBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ACharacter* wizard = Cast<ACharacter>(OtherActor);
+	ACharacter* wizard = Cast<ACharacter>(OtherActor); 
 	if (wizard == nullptr)
-	{
-		return;
-	}
+		return; 
 
+	// Calls spell inventory component on the wizard
 	USpellInventoryComponent* tempInv;
-	// Calls the spell inventory component on the wizardx
-	tempInv = Cast <USpellInventoryComponent>(wizard->GetComponentByClass(USpellInventoryComponent::StaticClass()));
-	tempInv->TryAddSpell();
-	ownerSpawner->Server_DelaySpawn();
-	FTimerHandle timer;
-	GetWorld()->GetTimerManager().SetTimer(timer, this, &APickupBox::Obliterate, 0.1f, false);
-	
+	tempInv = Cast<USpellInventoryComponent>(wizard->GetComponentByClass(USpellInventoryComponent::StaticClass())); 
+	tempInv->TryAddSpell(); 
+	UPickupSpawner* outerSpawner = Cast<UPickupSpawner>(GetSpawningActorPool()->GetOuter()); 
+	outerSpawner->Server_DelaySpawn(); 
+	FTimerHandle deactivateTimer; 
+	GetWorld()->GetTimerManager().SetTimer(deactivateTimer, this, &APickupBox::Deactivate, 0.1f, false); 
 }
 
 /*void APickupBox::Obliterate()

@@ -47,12 +47,11 @@ void UPickupSpawner::Server_SpawnPickups_Implementation(FVector SpawnLocation)
 	//tempBox->SetOwnerSpawner(this);
 }
 
-//void UPickupSpawner::Server_DelaySpawn_Implementation()
-//{
-//		FTimerHandle timer;
-//		GetWorld()->GetTimerManager().SetTimer(timer, this, &UPickupSpawner::SpawnPickups, FMath::RandRange(10,30), false);
-//	
-//}
+void UPickupSpawner::Server_DelaySpawn_Implementation()
+{
+	FTimerHandle delayTimer; 
+	GetWorld()->GetTimerManager().SetTimer(delayTimer, this, &UPickupSpawner::SpawnPickups, FMath::RandRange(10, 30), false); 
+}
 
 void UPickupSpawner::SpawnPickups()
 {

@@ -18,6 +18,12 @@ public:
 	// Sets default values for this component's properties
 	UPickupSpawner();
 
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UFUNCTION(Server, Reliable)
+		void Server_DelaySpawn();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawned Object")
 		TSubclassOf<class APickupBox> PickupBox;
 
@@ -35,7 +41,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Spawner Functions", Server, Reliable)
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Spawner Functions")
 		void Server_SpawnPickups(FVector SpawnLocation);
 
 	void SpawnPickups();
@@ -43,13 +49,4 @@ protected:
 	FVector CalcSpawnCoords();
 
 	class UActorPool* PickupPool = nullptr;
-	
-public:	
-	//// Called every frame
-	//UFUNCTION(Server, Reliable)
-	//	void Server_DelaySpawn();
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-
 };
