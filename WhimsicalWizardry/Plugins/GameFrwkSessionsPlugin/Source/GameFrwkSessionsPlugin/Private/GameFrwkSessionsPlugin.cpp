@@ -4,6 +4,12 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 #include "IGameFrwkSessionsPlugin.h"
+#include "OnlineGameInstance.h"
+#include "OnlineGameMode.h"
+#include "OnlineSubsystem.h"
+#include "OnlineSubsystemUtils.h"
+#include "LobbyGameMode.h"
+
 
 
 class FGameFrwkSessionsPlugin : public IGameFrwkSessionsPlugin

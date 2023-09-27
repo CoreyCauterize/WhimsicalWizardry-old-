@@ -49,7 +49,7 @@ void ADynamicCamera::BeginPlay()
 	Super::BeginPlay();
 
 	FTimerHandle timer;
-	GetWorld()->GetTimerManager().SetTimer(timer, this, &ADynamicCamera::GetAllWizards, 1.5f, false);
+	GetWorld()->GetTimerManager().SetTimer(timer, this, &ADynamicCamera::GetAllWizards, 2.5f, false);
 }
 
 void ADynamicCamera::Tick(float DeltaTime)

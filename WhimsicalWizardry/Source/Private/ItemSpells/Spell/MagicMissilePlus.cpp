@@ -5,6 +5,8 @@
 #include "ItemSpells/SpellObject/MagicMissilePlusObject.h"
 #include "SpellInventoryComponent.h"
 #include "GameFramework/Character.h"
+#include "NiagaraFunctionLibrary.h"
+
 
 AMagicMissilePlus::AMagicMissilePlus()
 {

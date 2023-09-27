@@ -5,6 +5,8 @@
 #include "ItemSpells/SpellObject/FireballObject.h"
 #include "SpellInventoryComponent.h"
 #include "GameFramework/Character.h"
+#include "NiagaraFunctionLibrary.h"
+
 
 
 AFireball::AFireball()

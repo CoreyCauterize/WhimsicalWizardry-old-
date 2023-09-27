@@ -9,6 +9,8 @@
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "ItemSpells/SpellObject/FireballExplosionObject.h"
+#include "NiagaraFunctionLibrary.h"
+
 
 
 

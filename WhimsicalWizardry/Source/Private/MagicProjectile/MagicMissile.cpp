@@ -13,6 +13,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Particles/ParticleSystem.h"
 #include "UObject/ConstructorHelpers.h"
+#include "NiagaraFunctionLibrary.h"
+
 
 // Projectile Constants
 const float AMagicMissile::BASE_CAPSULE_SIZE_X = 20.0f;

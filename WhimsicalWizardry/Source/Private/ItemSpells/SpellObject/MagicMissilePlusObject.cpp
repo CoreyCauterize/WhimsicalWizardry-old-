@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "NiagaraFunctionLibrary.h"
+
 
 
 AMagicMissilePlusObject::AMagicMissilePlusObject()
@@ -80,7 +82,7 @@ void AMagicMissilePlusObject::OnOverlapBegin(UPrimitiveComponent* OverlappedComp
 		FVector LaunchVector = missileMovement->Velocity;
 		LaunchVector.Normalize();
 		LaunchVector.Z = 2;
-		LaunchVector *= 5;
+		LaunchVector *= 2;
 
 		LaunchHitWizard(HitWizard, LaunchVector);
 

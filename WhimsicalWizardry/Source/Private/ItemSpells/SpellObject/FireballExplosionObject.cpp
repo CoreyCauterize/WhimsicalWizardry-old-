@@ -6,6 +6,8 @@
 #include "NiagaraComponent.h"
 #include <Net/UnrealNetwork.h>
 #include "GameFramework/CharacterMovementComponent.h"
+#include "NiagaraFunctionLibrary.h"
+
 
 
 

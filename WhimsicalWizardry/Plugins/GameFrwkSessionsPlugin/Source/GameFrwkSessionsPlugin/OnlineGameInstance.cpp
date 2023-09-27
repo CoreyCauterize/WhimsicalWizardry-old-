@@ -13,6 +13,11 @@
 #include "OnlineSubsystemNames.h"
 #include "OnlineSubsystemUtils.h"
 #include "Interfaces/OnlineSharingInterface.h"
+#include "OnlineSessionSettings.h"
+
+
+#include "Interfaces/OnlinePresenceInterface.h"
+
 const static FName SESSION_NAME = TEXT("Game");
 const static FName SERVER_NAME_SETTINGS_KEY = TEXT("ServerName");
 
@@ -350,13 +355,13 @@ void UOnlineGameInstance::RefreshServerList()
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if (SessionSearch.IsValid())
 	{
-		if(SessionSettings.bIsLANMatch)
+		if(SessionSettings.bIsLANMatch)qqq
 		   SessionSearch->bIsLanQuery = true;
 		else
 			SessionSearch->bIsLanQuery = false;
 
 		SessionSearch->MaxSearchResults = 100;
-		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+		SessionSearch->QuerySettings.Set("PRESENCESEARCH", true, EOnlineComparisonOp::Equals);
 		UE_LOG(LogTemp, Warning, TEXT("Starting Find Session"));
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 	}

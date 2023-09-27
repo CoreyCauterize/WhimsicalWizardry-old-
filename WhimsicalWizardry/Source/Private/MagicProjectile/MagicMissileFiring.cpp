@@ -10,6 +10,8 @@
 #include "Components/ArrowComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Weapon constants
 const float UMagicMissileFiring::BASE_FIRE_RATE = 0.25f;

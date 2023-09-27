@@ -14,6 +14,8 @@
 #include "OnlineSubsystemUtils.h"
 
 #include "MenuSystem/MenuInterface.h"
+#include "OnlineSessionSettings.h"
+
 #include "OnlineGameInstance.generated.h"
 
 USTRUCT()
