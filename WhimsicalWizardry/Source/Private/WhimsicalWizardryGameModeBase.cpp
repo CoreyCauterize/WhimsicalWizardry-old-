@@ -2,6 +2,8 @@
 
 
 #include "WhimsicalWizardryGameModeBase.h"
+#include "WimsicalWizardryGameStateBase.h"
+#include "WimsicalWizardryPlayerState.h"
 #include "GameFramework/Pawn.h"
 #include "DynamicCamera.h"
 #include "Camera/CameraComponent.h"
@@ -25,9 +27,26 @@ void AWhimsicalWizardryGameModeBase::HandleStartingNewPlayer_Implementation(APla
 {
     Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 	APawn* NewPawn = NewPlayer->GetPawn();
-
+	setNewPlayersTeam(NewPawn);
 	//NMC_SpawnPlayerCamera(NewPlayer);
+	
+}
 
+void AWhimsicalWizardryGameModeBase::setNewPlayersTeam(APawn* pawn)
+{
+	AWimsicalWizardryPlayerState* newPlayerState = Cast<AWimsicalWizardryPlayerState>(pawn->GetPlayerState());
+	if (newPlayerState != nullptr)
+	{
+		newPlayerState->setTeam(m_nextPlayersTeam);
+		if (m_nextPlayersTeam == 0)
+		{
+			m_nextPlayersTeam = 1;
+		}
+		else if (m_nextPlayersTeam == 1)
+		{
+			m_nextPlayersTeam = 0;
+		}
+	}
 }
 
 void AWhimsicalWizardryGameModeBase::NMC_SpawnPlayerCamera_Implementation(APlayerController* NewPlayer)

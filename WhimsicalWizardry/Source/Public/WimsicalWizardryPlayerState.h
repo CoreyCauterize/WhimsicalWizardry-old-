@@ -15,6 +15,8 @@ class WHIMSICALWIZARDRY_API AWimsicalWizardryPlayerState : public APlayerState
 	GENERATED_BODY()
 
 public:
+	int getTeam();
+	void setTeam(int team);
 
 	int getLives();
 	int getPlayerScore();
@@ -28,4 +30,5 @@ public:
 private:
 	int m_lives = 3;
 	int m_playerScore = 0;
+	int m_team;
 };

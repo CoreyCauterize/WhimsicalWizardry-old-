@@ -34,4 +34,5 @@ private:
 		int m_player0Score;
 	UPROPERTY(Replicated)
 		int m_player1Score;
+	int m_teamThatWon;
 };

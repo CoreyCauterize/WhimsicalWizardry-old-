@@ -3,6 +3,16 @@
 
 #include "WimsicalWizardryPlayerState.h"
 
+int AWimsicalWizardryPlayerState::getTeam()
+{
+    return m_team;
+}
+
+void AWimsicalWizardryPlayerState::setTeam(int team)
+{
+    m_team = team;
+}
+
 int AWimsicalWizardryPlayerState::getLives()
 {
     return m_lives;
